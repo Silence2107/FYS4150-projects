@@ -28,33 +28,29 @@ std::vector<double> tridiag_inverter_general(const std::vector<double> &subdiag,
 
 
 //Special algorithm
-std::vector<double> tridiag_inverter_special(const std::vector<double> &subdiag, const std::vector<double> &diag, const std::vector<double> &superdiag, const std::vector<double> &rhs)
+std::vector<double> tridiag_inverter_special(size_t n, const std::vector<double> &rhs)
 {
-    size_t n = diag.size();
     std::vector<double> v(n); // The solution vector
-    std::vector<double> g(n - 1); // new right hand side
-    std::vector<double> b(n - 1);
+    std::vector<double> g(n); // new right hand side
+    std::vector<double> b(n); // new diagonal
 
-    //Defining g1 and b1 (the first main diagonal value)
+    //Defining g array:
     g[0] = rhs[0];
-    b[0] = 2; //the first diagonal value defined
-    double row_op = 0.5; //first row operation
 
     //Looping from i=1 to i=n-2
     for (size_t i = 1; i < n - 1; ++i)
     {
-        g[i] = g[i] + g[i - 1]*row_op;
-        row_op = (i + 1 / i + 2);
+        g[i] = g[i] + g[i - 1] * i / static_cast<double>(i + 1);
     }
 
     g[n - 1] = g[n - 2] + rhs[n - 1];
 
     //Backward substitution
 
-    //Looping from i=1 to i=n-2
-    for (size_t i = 1; i < n - 1; ++i)
+    //Initializing new diagonal
+    for (size_t i = 0; i < n; ++i)
     {
-        b[i] = (i + 1)/i; //for the next for loop
+        b[i] = (i + 2)/static_cast<double>(i + 1); //for the next for loop
     }
 
     v[n - 1] = g[n - 1]/b[n - 1];

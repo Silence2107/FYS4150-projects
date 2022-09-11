@@ -49,7 +49,7 @@ int main(int argc, char **argv)
         rhs[n - 1] += y_max;
 
         // ...but use the general algorithm to solve the system
-        std::vector<double> v = tridiag_inverter_special(subdiag, diag, superdiag, rhs);
+        std::vector<double> v = tridiag_inverter_special(n, rhs);
 
         // for completeness, we also add boundary conditions to the solution
         v.insert(v.begin(), y_min);
