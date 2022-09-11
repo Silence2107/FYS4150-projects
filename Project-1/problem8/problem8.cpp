@@ -14,7 +14,7 @@ double exactSolution(double x)
     return 1.0 - (1.0 - exp(-10.0)) * x - exp(-10.0 * x);
 }
 
-int main()
+int main(int argc, char **argv)
 {
 
     std::string line;
@@ -22,6 +22,14 @@ int main()
 
     // A vector of vectors to store the the rows in the input file
     std::vector<std::vector<double>> input_data;
+
+    if (argc < 3)
+    {
+        throw std::invalid_argument("Usage: ./problem8 <output file log10 absolute error> <output file log10 relative error>");
+    }
+
+    std::string fpathAbsolute = argc > 1 ? argv[1] : "abs_error.csv";
+    std::string fpathRelative = argc > 2 ? argv[2] : "rel_error.csv";
 
     while (std::cin)
     {
@@ -60,9 +68,10 @@ int main()
     }
 */
     std::ofstream ofileAbsoluteError;
-    ofileAbsoluteError.open("abs_error.csv");
+    ofileAbsoluteError.open(fpathAbsolute);
     std::ofstream ofileRelativeError;
-    ofileRelativeError.open("rel_error.csv");
+    //ofileRelativeError.open("rel_error.csv");
+    ofileRelativeError.open(fpathRelative);
 
     for (int i = 0; i < input_data.size(); i++)
     {
