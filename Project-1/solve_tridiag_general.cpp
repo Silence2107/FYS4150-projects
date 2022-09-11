@@ -41,22 +41,22 @@ int main(int argc, char **argv)
     for (size_t i = 0; i < n; ++i)
     {
         // discretize and fill
-        double step = (x_max - x_min) / static_cast<double>(n - 1);
-        x[i] = x_min + i * step;
+        double step = (x_max - x_min) / static_cast<double>(n + 1);
+        x[i] = x_min + (i + 1) * step;
         rhs[i] = step * step * rhs_function(x[i]);
     }
-        rhs[0] += y_min;
-        rhs[n - 1] += y_max;
+    rhs[0] += y_min;
+    rhs[n - 1] += y_max;
 
-        // ...but use the general algorithm to solve the system
-        std::vector<double> v = tridiag_inverter_general(subdiag, diag, superdiag, rhs);
+    // ...but use the general algorithm to solve the system
+    std::vector<double> v = tridiag_inverter_general(subdiag, diag, superdiag, rhs);
 
-        // for completeness, we also add boundary conditions to the solution
-        v.insert(v.begin(), y_min);
-        v.push_back(y_max);
-        x.insert(x.begin(), x_min);
-        x.push_back(x_max);
+    // for completeness, we also add boundary conditions to the solution
+    v.insert(v.begin(), y_min);
+    v.push_back(y_max);
+    x.insert(x.begin(), x_min);
+    x.push_back(x_max);
 
-        // write to file
-        two_columns_to_csv(fpath, x, v);
+    // write to file
+    two_columns_to_csv(fpath, x, v);
 }
