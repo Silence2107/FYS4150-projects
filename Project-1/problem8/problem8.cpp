@@ -1,10 +1,13 @@
 #include <vector>
 #include <string>
+#include <fstream>
 #include <stdexcept>
 #include <cmath>
 #include <iostream>
 #include <sstream>
 #include <cmath>
+#include <math.h>
+#include <iomanip>
 
 double exactSolution(double x)
 {
@@ -56,9 +59,14 @@ int main()
         std::cout << std::endl;
     }
 
+    std::ofstream ofileAbsoluteError;
+    ofileAbsoluteError.open("abs_error.csv");
+    std::ofstream ofileRelativeError;
+    ofileRelativeError.open("rel_error.csv");
+
     for (int i = 0; i < input_data.size(); i++)
     {
-        //A very small number near machine precision. Use this number later to check for equality to zero within a finite margin. 
+        // A very small number near machine precision. Use this number later to check for equality to zero within a finite margin.
         double epsilon = 0.000000000000001; // 1e-15
         std::vector<double> data_row = input_data[i];
 
@@ -66,26 +74,31 @@ int main()
         double yValue = data_row[2];
 
         double exactValue = exactSolution(xValue);
-        //std::cout << "Exakt: " << exactValue << std::endl;
+        // std::cout << "Exakt: " << exactValue << std::endl;
 
         double error = (exactValue - yValue);
         double absoluteError = fabs(exactValue - yValue);
 
-
-        //std::cout << "x: " << xValue << " y:" << yValue << " u:" << exactValue << " error:" << error << " abs error:" << absoluteError << std::endl;
+        // std::cout << "x: " << xValue << " y:" << yValue << " u:" << exactValue << " error:" << error << " abs error:" << absoluteError << std::endl;
 
         double log10Error = log10(absoluteError);
         double log10RelativeError = 0.0;
-        //Avoid division by zero by only computing error if divisor is not zero or very close to zero.
+        // Avoid division by zero by only computing error if divisor is not zero or very close to zero.
         if (fabs(exactValue) > epsilon)
         {
             log10RelativeError = log10(absoluteError / fabs(exactValue));
         }
 
-        std::cout << "Error: " << absoluteError  << " Log abs error: " << log10Error  << " Log rel error: " << log10RelativeError << std::endl;
-        //std::cout << "Error: " << error << "Log abs error: " << log10Error << "Log rel error: " << log10RelativeError << std::endl;
+        std::cout << "Error: " << absoluteError << " Log abs error: " << log10Error << " Log rel error: " << log10RelativeError << std::endl;
+        // std::cout << "Error: " << error << "Log abs error: " << log10Error << "Log rel error: " << log10RelativeError << std::endl;
         std::cout << std::endl;
+
+        ofileAbsoluteError << std::setprecision(2) << std::scientific << xValue << "\t" << log10Error << std::endl;         // print to file
+        ofileRelativeError << std::setprecision(2) << std::scientific << xValue << "\t" << log10RelativeError << std::endl; // print to file
     }
+
+    ofileAbsoluteError.close();
+    ofileRelativeError.close();
 
     return 0;
 }
