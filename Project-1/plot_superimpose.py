@@ -22,6 +22,7 @@ def main():
         plt.plot(data['x'], data['y'], label=args.labels[i])
     plt.xlabel("x")
     plt.ylabel("y")
+    #plt.yscale("log")
     plt.legend(title="Superimposed plots")
     plt.savefig(args.output)
 
