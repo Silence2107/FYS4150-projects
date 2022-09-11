@@ -47,7 +47,7 @@ int main()
             input_data.push_back(triplet);
         }
     };
-
+/*
     // reused some code from https://stackoverflow.com/questions/1784573/iterator-for-2d-vector
     for (int i = 0; i < input_data.size(); i++)
     {
@@ -58,7 +58,7 @@ int main()
         }
         std::cout << std::endl;
     }
-
+*/
     std::ofstream ofileAbsoluteError;
     ofileAbsoluteError.open("abs_error.csv");
     std::ofstream ofileRelativeError;
@@ -81,20 +81,22 @@ int main()
 
         // std::cout << "x: " << xValue << " y:" << yValue << " u:" << exactValue << " error:" << error << " abs error:" << absoluteError << std::endl;
 
-        double log10Error = log10(absoluteError);
+        double log10Error = 0.0;
         double log10RelativeError = 0.0;
         // Avoid division by zero by only computing error if divisor is not zero or very close to zero.
         if (fabs(exactValue) > epsilon)
         {
+            log10Error = log10(absoluteError);
             log10RelativeError = log10(absoluteError / fabs(exactValue));
+
+            ofileAbsoluteError << std::setprecision(2) << std::scientific << xValue << "\t" << log10Error << std::endl;         // print to file
+            ofileRelativeError << std::setprecision(2) << std::scientific << xValue << "\t" << log10RelativeError << std::endl; // print to file
         }
-
-        std::cout << "Error: " << absoluteError << " Log abs error: " << log10Error << " Log rel error: " << log10RelativeError << std::endl;
-        // std::cout << "Error: " << error << "Log abs error: " << log10Error << "Log rel error: " << log10RelativeError << std::endl;
-        std::cout << std::endl;
-
-        ofileAbsoluteError << std::setprecision(2) << std::scientific << xValue << "\t" << log10Error << std::endl;         // print to file
-        ofileRelativeError << std::setprecision(2) << std::scientific << xValue << "\t" << log10RelativeError << std::endl; // print to file
+        /*
+                std::cout << "Error: " << absoluteError << " Log abs error: " << log10Error << " Log rel error: " << log10RelativeError << std::endl;
+                // std::cout << "Error: " << error << "Log abs error: " << log10Error << "Log rel error: " << log10RelativeError << std::endl;
+                std::cout << std::endl;
+        */
     }
 
     ofileAbsoluteError.close();
