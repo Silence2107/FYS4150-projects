@@ -1,6 +1,21 @@
 Compile:
 g++ problem8.cpp -o problem8
 
+As input for Problem 8 we need to run the solution for Problem 7 multiple times to generate data files.
+Note the matrix size as parameter is a number ending with 9. This is n. 
+I however name the output file 1 digit larger, eg 10. This is nStep.
+This might be confusing but seems to be the convention used in course material, so we try to follow it. 
+
+./solve_tridiag_general.out 9        7_10.txt
+./solve_tridiag_general.out 99       7_100.txt
+./solve_tridiag_general.out 999      7_1000.txt
+./solve_tridiag_general.out 9999     7_10000.txt
+./solve_tridiag_general.out 99999    7_100000.txt
+./solve_tridiag_general.out 999999   7_1000000.txt
+./solve_tridiag_general.out 9999999  7_10000000.txt
+./solve_tridiag_general.out 99999999 7_100000000.txt
+
+
 Run example:
 ./problem8 < ./sol_nsteps100.txt
 

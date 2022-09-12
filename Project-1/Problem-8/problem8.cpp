@@ -9,6 +9,7 @@
 #include <math.h>
 #include <iomanip>
 
+//Calculate u(x) with the expression given in problem description.
 double exactSolution(double x)
 {
     return 1.0 - (1.0 - exp(-10.0)) * x - exp(-10.0 * x);
@@ -23,11 +24,12 @@ int main(int argc, char **argv)
     // A vector of vectors to store the the rows in the input file
     std::vector<std::vector<double>> input_data;
 
-    if (argc < 3)
+    if (argc > 3)
     {
         throw std::invalid_argument("Usage: ./problem8 <output file log10 absolute error> <output file log10 relative error>");
     }
 
+	//Default output file names. Overwrites if exists. 
     std::string fpathAbsolute = argc > 1 ? argv[1] : "abs_error.csv";
     std::string fpathRelative = argc > 2 ? argv[2] : "rel_error.csv";
 
@@ -96,7 +98,9 @@ int main(int argc, char **argv)
         }
     }
 
+	//Simply output this value to stdout. User will have to copy and paste it manually. 
     std::cout << "Highest absolute relative error found was: " << highestRelativeErrorFound << std::endl;
+	
     ofileAbsoluteError.close();
     ofileRelativeError.close();
 
