@@ -10,3 +10,10 @@ This folder contains the files for the first project of the course.
 3. [Problem 8](Problem-8/README.md)
 4. [Problem 9](Problem-9/README.md)
 5. [Problem 10](Problem-10/README.md)
+
+## Dependencies
+
+- pip3 packages
+    - pandas
+    - argparse
+    - matplotlib
