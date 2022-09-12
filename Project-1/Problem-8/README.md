@@ -1,7 +1,7 @@
 
 # Problem 8 manual
 
-## Compilating the solution for problem 8
+## Compiling the solution for problem 8
 
 Compile code for problem 8:
 `g++ problem8.cpp -o problem8`
