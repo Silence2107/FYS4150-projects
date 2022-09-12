@@ -1,8 +1,8 @@
 
 // inverting algorithm
-#include "include/tridiag_inverter.h"
+#include "../include/tridiag_inverter.h"
 // custom file io
-#include "include/file_io.h"
+#include "../include/file_io.h"
 
 #include <vector>
 #include <string>
