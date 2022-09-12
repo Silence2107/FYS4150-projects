@@ -11,6 +11,7 @@
 /// @param y Second column of data
 /// @param separator The separator to use between columns. Defaults to ",".
 /// @param index If true, write an index column. Default is false.
-void two_columns_to_csv(const std::string& fpath, const std::vector<double>& x, const std::vector<double>& y, const std::string& separator = ",", bool index = false);
+/// @param digits The number of digits to write for each number. Default is 7.
+void two_columns_to_csv(const std::string &fpath, const std::vector<double> &x, const std::vector<double> &y, const std::string &separator = ",", bool index = false, size_t digits = 7);
 
 #endif
