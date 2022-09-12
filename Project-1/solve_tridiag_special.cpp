@@ -41,8 +41,8 @@ int main(int argc, char **argv)
     for (size_t i = 0; i < n; ++i)
     {
         // discretize and fill
-        double step = (x_max - x_min) / static_cast<double>(n - 1);
-        x[i] = x_min + i * step;
+        double step = (x_max - x_min) / static_cast<double>(n + 1);
+        x[i] = x_min + (i + 1) * step;
         rhs[i] = step * step * rhs_function(x[i]);
     }
         rhs[0] += y_min;

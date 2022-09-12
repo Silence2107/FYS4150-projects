@@ -33,10 +33,12 @@ std::vector<double> tridiag_inverter_special(const std::vector<double> &rhs)
     size_t n = rhs.size();
     std::vector<double> v(n); // The solution vector
     std::vector<double> g(n); // new right hand side
-    std::vector<double> b(n); // new diagonal
+    std::vector<double> b(n);
 
-    //Defining g array:
-    g[0] = rhs[0];
+    //Defining g1 and b1 (the first main diagonal value)
+    g[0] = rhs[0]; //g1
+    //b[0] = 2;
+    //double row_op = 0.5; //first row operation
 
     //Looping from i=1 to i=n-2
     for (size_t i = 1; i < n; ++i)
@@ -46,10 +48,10 @@ std::vector<double> tridiag_inverter_special(const std::vector<double> &rhs)
 
     //Backward substitution
 
-    //Initializing new diagonal
+    //Looping from i=1 to i=n-2
     for (size_t i = 0; i < n; ++i)
     {
-        b[i] = (i + 2)/static_cast<double>(i + 1); //for the next for loop
+        b[i] = (i+2)/static_cast<double>(i+1);
     }
 
     v[n - 1] = g[n - 1]/b[n - 1];
