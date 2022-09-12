@@ -47,10 +47,10 @@ int main(int argc, char **argv)
             // Parse the string (line) and interpret it as three
             // double variables (x, y, f)
             std::stringstream mysstream(line);
-            mysstream >> x >> y >> f;
+            mysstream >> x >> y;
 
             // Save the three values in a new vector in input_data
-            std::vector<double> triplet = {x, y, f};
+            std::vector<double> triplet = {x, y};
             input_data.push_back(triplet);
         }
     };
@@ -70,8 +70,8 @@ int main(int argc, char **argv)
         double epsilon = 0.000000000000001; // 1e-15
         std::vector<double> data_row = input_data[i];
 
-        double xValue = data_row[1];
-        double yValue = data_row[2];
+        double xValue = data_row[0];
+        double yValue = data_row[1];
 
         double exactValue = exactSolution(xValue);
 

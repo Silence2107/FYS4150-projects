@@ -1,4 +1,4 @@
-Compile:
+Compile code for problem 8:
 g++ problem8.cpp -o problem8
 
 As input for Problem 8 we need to run the solution for Problem 7 multiple times to generate data files.
@@ -16,9 +16,12 @@ This might be confusing but seems to be the convention used in course material, 
 ./solve_tridiag_general.out 99999999 7_100000000.txt
 
 
-Run example:
-./problem8 < ./sol_nsteps100.txt
+Move all these txt-files from directory Problem-7 to Problem-8. 
 
+Since code for 7 outputs comma character as separator, and problem 8 assumes blank space as separator, run a command to replace this in all files.
+sed -i 's/,/ /g' 7_*.txt
+
+Then continue running problem 8 executable:
 
 ./problem8 abs_e4.txt rel_e4.txt < 7_10000.txt
 ./problem8 abs_e3.txt rel_e3.txt < 7_1000.txt
