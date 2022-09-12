@@ -28,8 +28,9 @@ std::vector<double> tridiag_inverter_general(const std::vector<double> &subdiag,
 
 
 //Special algorithm
-std::vector<double> tridiag_inverter_special(size_t n, const std::vector<double> &rhs)
+std::vector<double> tridiag_inverter_special(const std::vector<double> &rhs)
 {
+    size_t n = rhs.size();
     std::vector<double> v(n); // The solution vector
     std::vector<double> g(n); // new right hand side
     std::vector<double> b(n); // new diagonal
@@ -38,12 +39,10 @@ std::vector<double> tridiag_inverter_special(size_t n, const std::vector<double>
     g[0] = rhs[0];
 
     //Looping from i=1 to i=n-2
-    for (size_t i = 1; i < n - 1; ++i)
+    for (size_t i = 1; i < n; ++i)
     {
-        g[i] = g[i] + g[i - 1] * i / static_cast<double>(i + 1);
+        g[i] = rhs[i] + g[i - 1] * i / static_cast<double>(i + 1);
     }
-
-    g[n - 1] = g[n - 2] + rhs[n - 1];
 
     //Backward substitution
 

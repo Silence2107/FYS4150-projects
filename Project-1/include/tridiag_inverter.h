@@ -12,6 +12,6 @@
 /// @return The solution to the system of equations of size n
 std::vector<double> tridiag_inverter_general(const std::vector<double> &subdiag, const std::vector<double> &diag, const std::vector<double> &superdiag, const std::vector<double> &rhs);
 
-std::vector<double> tridiag_inverter_special(size_t n, const std::vector<double> &rhs);
+std::vector<double> tridiag_inverter_special(const std::vector<double> &rhs);
 
 #endif
