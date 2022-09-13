@@ -26,7 +26,8 @@ std::vector<double> tridiag_inverter_general(const std::vector<double> &subdiag,
     return v;
 }
 
-// Special algorithm
+
+//Special algorithm
 std::vector<double> tridiag_inverter_special(const std::vector<double> &rhs)
 {
     size_t n = rhs.size();
