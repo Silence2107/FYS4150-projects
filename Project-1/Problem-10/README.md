@@ -20,9 +20,9 @@ at the start and end of the algorithms, respectively (solve_tridiag_general.cpp 
 
 To produce more statistically meaningul data, for each given discretization number the timings are collected re running the algorithms a number of times (in this case 100). This can be done with a loop, with the following command line to execute the code:
 
-`for f in {1..100}; do ./path/to/solve_tridiag_general.out < discretization > <output_file = "output.csv"> >> <out_timings = "timings-g-$n_times.csv"; done `
+`for f in {1..100}; do ./path/to/solve_tridiag_general.out < discretization > <output_file = "output.csv"> >> <out_timings = "timings-g-discretization.csv"; done `
 
-(and similarly for the special algorithm). Note that the output, that is the time required by the algorithm, is redirected to an additional output file. The timings will be collected in each timings*.csv file, then averaged with: `awk '{ total += $1 } END { print total/NR }'  timings-100.csv `
+(and similarly for the special algorithm). Note that the output, that is the time required by the algorithm, is redirected to an additional output file. The timings will be collected in each timings*.csv file, then averaged with: `awk '{ total += $1 } END { print total/NR }'  timings-discretization.csv `
 
 Additionally, all the timings for different discretization numbers can be collected into one unique file with: `paste -d ',' timings-{file1}.csv timings-{file2}.csv {...}  > timings-{s-or-g}.csv `
 
