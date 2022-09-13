@@ -1,4 +1,4 @@
-# Problem 2 manual
+# Problem 10 manual
 
 ## Comparing timings
  
