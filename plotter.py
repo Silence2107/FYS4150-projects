@@ -15,6 +15,6 @@ data.plot(x="x", y="ux", kind="line", figsize=(5, 5), legend="")
 plt.xlabel("x"); plt.ylabel("u(x)")
 #plt.xlim(0,1); plt.ylim(0 , .5)
 #plt.title("plot title")
-plt.savefig('p1-2.png')
+plt.savefig('p1-2.pdf')
 plt.show()
 
