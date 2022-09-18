@@ -1,4 +1,7 @@
 
+#ifndef EIGEN_LINALG_H
+#define EIGEN_LINALG_H
+
 #include<armadillo>
 #include<vector>
 
@@ -9,3 +12,5 @@
 /// @return A[row, col]
 /// @note It does not have a lot of sense to put this function in outer scope, but for academic purposes we will
 double abs_max_offdiag_for_symmetric(const arma::mat &A, size_t &row, size_t &col);
+
+#endif
