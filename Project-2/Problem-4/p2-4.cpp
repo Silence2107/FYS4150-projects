@@ -76,7 +76,7 @@ int main()
             for (int j = 0; j < N; j++)
             {
                 A(i, j) = A_mp1(i, j);
-                R(i, j) = A_mp1(i, j);
+                R(i, j) = R_mp1(i, j);
             }
         }
     } while (max > eps);
