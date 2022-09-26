@@ -2,6 +2,7 @@
 #include <armadillo>
 #include <vector>
 #include <cmath>
+#include <iomanip>
 #include "../include/create_tridiag.h"
 
 arma::vec eigval;
@@ -9,7 +10,7 @@ arma::mat eigvec;
 double h=0.1;
 double N=6;
 double h2=pow(h,2);
-double a=1/h2, d=-1/h2;
+double a=-1/h2, d=2/h2;
 
 int main() { 
 
