@@ -1,9 +1,8 @@
-#include "../include/create_tridiag.h"
-
 #include <armadillo>
 #include <cmath>
+#include "../include/create_tridiag.h"
 
-arma::mat create_tridiagonal(const int &N, double &h); 
+arma::mat create_tridiagonal(int &N, double &h)
 
 {
     double h2=pow(h,2), a=-1/h2, d=2/h2;
@@ -19,6 +18,6 @@ arma::mat create_tridiagonal(const int &N, double &h);
         A(i,i) = d;
         A(i,i-1) = a; 
         A(i,i+1) = a; 
-  
+    }
     return A;
 }
