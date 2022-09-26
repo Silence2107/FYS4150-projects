@@ -48,7 +48,7 @@ int main()
 
         // transform current A matrix: A^(m+1)=S_m^T*A^m*S_m, by updating elements
         A_mp1(k, k) = A(k, k) * pow(c, 2) - 2 * A(k, l) * c * s + A(l, l) * pow(s, 2);
-        A_mp1(l, l) = A(l, l) * pow(c, 2) + 2 * A(k, l) * c * s + A(k, k) * pow(s, 2);
+        A_mp1(l, l) = A(l, l) * pow(s, 2) + 2 * A(k, l) * c * s + A(k, k) * pow(s, 2);
         A_mp1(k, l) = 0;
         A_mp1(l, k) = 0;
 
@@ -57,7 +57,7 @@ int main()
             if (i != k || i == l)
             {
                 A_mp1(i, k) = A(i, k) * c - A(i, l) * s;
-                A_mp1(k, l) = A_mp1(i, k);
+                A_mp1(k, i) = A_mp1(i, k);
                 A_mp1(i, l) = A(i, l) * c + A(i, k) * s;
                 A_mp1(l, i) = A_mp1(i, l);
             }
@@ -67,7 +67,7 @@ int main()
         for (int i = 0; i < N; i++)
         {
             R_mp1(i, k) = R(i, k) * c - R(i, l) * s;
-            R_mp1(i, l) = R(i, l) * c - R(i, k) * s;
+            R_mp1(i, l) = R(i, l) * c + R(i, k) * s;
         }
 
         // update A_m and R_m for new loop
