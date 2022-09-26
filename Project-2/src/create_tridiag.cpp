@@ -2,7 +2,7 @@
 #include <cmath>
 #include "../include/create_tridiag.h"
 
-arma::mat create_tridiagonal(int &N, double &h)
+arma::mat create_tridiagonal(int N, double h)
 
 {
     double h2=pow(h,2), a=-1/h2, d=2/h2;
