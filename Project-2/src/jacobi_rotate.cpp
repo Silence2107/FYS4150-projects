@@ -1,26 +1,22 @@
+#include "../include/jacobi_rotate.h"
+
 #include <iostream>
 #include <armadillo>
 #include <vector>
 #include <cmath>
+#include <stdexcept>
 
-// Performs a single Jacobi rotation, to "rotate away"
-// the off-diagonal element at A(k,l).
 void jacobi_rotate(arma::mat &A, arma::mat &R, size_t k, size_t l)
 {
-    // Code structure as suggested in task https://anderkve.github.io/FYS3150/book/projects/project2.html
-    // Algoritm based partially on lecture notes and partially on page 218-220 of 
-    // Morten Hjorth-Jensen, Computational Physics, Lecture Notes Fall 2015
-    // https://raw.githubusercontent.com/CompPhysics/ComputationalPhysics/master/doc/Lectures/lectures2015.pdf
-
     //Obtain size directly from input matrix, and check it's square (could be optimized away later). 
     if (A.n_rows != A.n_cols)
         throw std::invalid_argument("Matrix is not square");
     int N = A.n_rows;
     double t;
 
-    // initialise A_mp1 and R_mp1 matrices
-    arma::mat A_mp1 = arma::mat(N, N).fill(0.000);
-    arma::mat R_mp1 = arma::mat(N, N).fill(0.000);
+    // new A and R matrices initialized to current A and R
+    arma::mat A_mp1 = A;
+    arma::mat R_mp1 = R;
 
     // calculate tau, t, c, s
     double tau = (A(l, l) - A(k, k)) / (2 * A(k, l));
@@ -39,13 +35,13 @@ void jacobi_rotate(arma::mat &A, arma::mat &R, size_t k, size_t l)
 
     // transform current A matrix: A^(m+1)=S_m^T*A^m*S_m, by updating elements
     A_mp1(k, k) = A(k, k) * pow(c, 2) - 2 * A(k, l) * c * s + A(l, l) * pow(s, 2);
-    A_mp1(l, l) = A(l, l) * pow(s, 2) + 2 * A(k, l) * c * s + A(k, k) * pow(s, 2);
+    A_mp1(l, l) = A(l, l) * pow(c, 2) + 2 * A(k, l) * c * s + A(k, k) * pow(s, 2);
     A_mp1(k, l) = 0;
     A_mp1(l, k) = 0;
 
     for (int i = 0; i < N; i++)
     {
-        if (i != k || i == l)
+        if (i != k && i != l)
         {
             A_mp1(i, k) = A(i, k) * c - A(i, l) * s;
             A_mp1(k, i) = A_mp1(i, k);
@@ -61,13 +57,7 @@ void jacobi_rotate(arma::mat &A, arma::mat &R, size_t k, size_t l)
         R_mp1(i, l) = R(i, l) * c + R(i, k) * s;
     }
 
-    // update A_m and R_m for new loop
-    for (int i = 0; i < N; i++)
-    {
-        for (int j = 0; j < N; j++)
-        {
-            A(i, j) = A_mp1(i, j);
-            R(i, j) = R_mp1(i, j);
-        }
-    }
+    // update A & R
+    A = A_mp1;
+    R = R_mp1;
 }
