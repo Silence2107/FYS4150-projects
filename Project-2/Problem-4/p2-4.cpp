@@ -7,8 +7,8 @@
 
 #include <iomanip>
 
-//TODO: Move this declaration to a h-file.
-void jacobi_rotate(arma::mat& A, arma::mat& R, int k, int l);
+// TODO: Move this declaration to a h-file.
+void jacobi_rotate(arma::mat &A, arma::mat &R, int k, int l);
 
 int main()
 {
