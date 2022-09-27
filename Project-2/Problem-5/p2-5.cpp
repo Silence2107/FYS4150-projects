@@ -1,18 +1,13 @@
 
 #include "../include/create_tridiag.h"
 #include "../include/eigen_linalg.h"
-#include "../include/jacobi_rotate.h"
+//#include "../include/jacobi_rotate.h"
 
 #include <iostream>
 #include <armadillo>
 #include <vector>
 #include <cmath>
 #include <iomanip>
-
-// TODO: Move to other cpp/h-files
-void jacobi_eigensolver(const arma::mat &A, double eps, arma::vec &eigenvalues, arma::mat &eigenvectors,
-                        const int maxiter, int &iterations, bool &converged);
-
 
 int main()
 {
@@ -68,33 +63,4 @@ double h=0.1;
     std::cout << std::setprecision(4) << R_arma << std::endl;
 
     return 0;
-}
-
-
-void jacobi_eigensolver(const arma::mat &A, double eps, arma::vec &eigenvalues, arma::mat &eigenvectors,
-                        const int maxiter, int &iterations, bool &converged)
-{
-    int N = A.n_rows;
-    double max;
-    
-    arma::mat A2 = arma::symmatu(A);
-    // While max off diag value above threshold
-    do
-    {
-        size_t k, l;
-        //std::cout << A << std::endl;
-        max = fabs(abs_max_offdiag_for_symmetric(A2, k, l));
-        if (max < eps)
-        {
-            break;
-        }
-        jacobi_rotate(A2, eigenvectors, k, l);
-
-    } while (true);
-
-    for (int i = 0; i < N; i++)
-    {
-        eigenvalues(i) = A2(i, i);
-    }
-
 }
