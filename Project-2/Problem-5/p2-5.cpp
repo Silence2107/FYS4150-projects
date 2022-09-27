@@ -19,13 +19,15 @@ int main()
     double eps = 1.0 * pow(10, -8);
     //double h = 0.1;
     int N = 6;
+double h=0.1;
 
     // initialize random
     srand(time(0));
 
     arma::mat R = arma::mat(N, N).eye();
     // Generate random N*N matrix
-    arma::mat A = arma::mat(N, N).randn();
+    //arma::mat A = arma::mat(N, N).randn();
+    arma::mat A=create_tridiagonal(N, h);
 
     // Symmetrize the matrix by reflecting the upper triangle to lower triangle
     A = arma::symmatu(A);
