@@ -14,10 +14,10 @@ int main()
 {
     double eps = 1.0 * pow(10, -8);
     double h = 0.1;
-    int N = 6;
+    int N = 4;
 
     arma::mat R = arma::mat(N, N).fill(1.000);
-    arma::mat A{{1, 0, 0, 0.5, 0, 0.5}, {0, -0.4, -0.7, 0, -0.7, 0}, {0, -0.7, 1, 0, 1, 0}, {0.5, 0, 0, 1, -0.5, 1}, {0, -0.7, 1, -0.5, 0, -0.7}, {0.5, 0, 0, 1, -0.7, -0.9}};
+    arma::mat A {{1, 0, 0, 0.5}, {0, 1, -0.7, 0}, {0, -0.7, 1, 0}, {0.5, 0, 0, 1}};
 
     double max;
     // While max off diag value above threshold
