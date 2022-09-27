@@ -1,4 +1,6 @@
 
+#include "../include/eigen_linalg.h"
+
 #include <armadillo>
 #include <stdexcept>
 #include <cmath>
