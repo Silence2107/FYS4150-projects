@@ -18,7 +18,7 @@ int main(int argc, char **argv)
     //Read program parameters, with default values N=10, eps=1e-8 and maxIterations=1e5 if not specified. 
     double N = argc > 1 ? atof(argv[1]) : 10;
     double eps = argc > 2 ? atof(argv[2]) : 1.0 * pow(10, -8);
-    int maxIterations = argc > 2 ? atof(argv[3]) : 100000;
+    int maxIterations = argc > 3 ? atof(argv[3]) : 100000;
 
     double h=1.0/(N+1); //Because given in the task is N=n-1 and h=1/N
 
