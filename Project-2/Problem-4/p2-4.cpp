@@ -7,13 +7,13 @@
 
 #include <iomanip>
 
+void jacobi_rotate(arma::mat& A, arma::mat& R, int k, int l);
+
 int main()
 {
-
     double eps = 1.0 * pow(10, -8);
     double h = 0.1;
     int N = 6;
-    double t;
 
     arma::mat R = arma::mat(N, N).fill(1.000);
     arma::mat A{{1, 0, 0, 0.5, 0, 0.5}, {0, -0.4, -0.7, 0, -0.7, 0}, {0, -0.7, 1, 0, 1, 0}, {0.5, 0, 0, 1, -0.5, 1}, {0, -0.7, 1, -0.5, 0, -0.7}, {0.5, 0, 0, 1, -0.7, -0.9}};
@@ -26,12 +26,49 @@ int main()
         std::cout << A << std::endl;
         max = fabs(abs_max_offdiag_for_symmetric(A, k, l));
 
+        jacobi_rotate(A, R, k, l);
+
+    } while (max > eps);
+
+    // get eigenvalues from the diag of A
+    arma::vec eigval = arma::vec(N);
+
+    for (int i = 0; i < N; i++)
+    {
+        eigval(i) = A(i, i);
+    }
+
+    // print
+    std::cout << std::endl
+              << "Eigenvalues from the Jacobi rotation method:" << std::endl;
+    std::cout << std::setprecision(4) << eigval << std::endl;
+
+    std::cout << std::endl
+              << "Eigenvectors from the Jacobi rotation method:" << std::endl;
+    std::cout << std::setprecision(4) << R << std::endl;
+
+    return 0;
+}
+
+// Performs a single Jacobi rotation, to "rotate away"
+// the off-diagonal element at A(k,l).
+void jacobi_rotate(arma::mat& A, arma::mat& R, int k, int l)
+{
+        //Code structure as suggested in task Morten Hjorth-Jensen, Computational Physics, Lecture Notes Fall 2015
+        //Algoritm based partially on page 218-220 of Morten Hjorth-Jensen, Computational Physics, Lecture Notes Fall 2015
+        //https://raw.githubusercontent.com/CompPhysics/ComputationalPhysics/master/doc/Lectures/lectures2015.pdf
+
+        if (A.n_rows != A.n_cols)
+            throw std::invalid_argument("Matrix is not square");
+
+        int N = A.n_rows;
+        double t;
+
         // initialise A_mp1 and R_mp1 matrices
         arma::mat A_mp1 = arma::mat(N, N).fill(0.000);
         arma::mat R_mp1 = arma::mat(N, N).fill(0.000);
 
         // calculate tau, t, c, s
-
         double tau = (A(l, l) - A(k, k)) / (2 * A(k, l));
 
         if (tau > 0)
@@ -79,24 +116,4 @@ int main()
                 R(i, j) = R_mp1(i, j);
             }
         }
-    } while (max > eps);
-
-    // get eigenvalues from the diag of A
-    arma::vec eigval = arma::vec(N);
-
-    for (int i = 0; i < N; i++)
-    {
-        eigval(i) = A(i, i);
-    }
-
-    // print
-    std::cout << std::endl
-              << "Eigenvalues from the Jacobi rotation method:" << std::endl;
-    std::cout << std::setprecision(4) << eigval << std::endl;
-
-    std::cout << std::endl
-              << "Eigenvectors from the Jacobi rotation method:" << std::endl;
-    std::cout << std::setprecision(4) << R << std::endl;
-
-    return 0;
 }
