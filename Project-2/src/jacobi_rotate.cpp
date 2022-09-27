@@ -5,15 +5,16 @@
 
 // Performs a single Jacobi rotation, to "rotate away"
 // the off-diagonal element at A(k,l).
-void jacobi_rotate(arma::mat &A, arma::mat &R, int k, int l)
+void jacobi_rotate(arma::mat &A, arma::mat &R, size_t k, size_t l)
 {
-    // Code structure as suggested in task Morten Hjorth-Jensen, Computational Physics, Lecture Notes Fall 2015
-    // Algoritm based partially on page 218-220 of Morten Hjorth-Jensen, Computational Physics, Lecture Notes Fall 2015
+    // Code structure as suggested in task https://anderkve.github.io/FYS3150/book/projects/project2.html
+    // Algoritm based partially on lecture notes and partially on page 218-220 of 
+    // Morten Hjorth-Jensen, Computational Physics, Lecture Notes Fall 2015
     // https://raw.githubusercontent.com/CompPhysics/ComputationalPhysics/master/doc/Lectures/lectures2015.pdf
 
+    //Obtain size directly from input matrix, and check it's square (could be optimized away later). 
     if (A.n_rows != A.n_cols)
         throw std::invalid_argument("Matrix is not square");
-
     int N = A.n_rows;
     double t;
 
