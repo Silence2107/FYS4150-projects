@@ -12,14 +12,15 @@
 int main(int argc, char **argv)
 {
 
-    if (argc > 3)
+    if (argc > 4)
     {
-        throw std::invalid_argument("Usage: ./problem5 <size N of A> <eps>");
+        throw std::invalid_argument("Usage: ./problem5 <size N of A> <eps> <max iterations>");
     }
 
-    //Read program parameters, with default values N=10 and eps=1e-8 if not specified. 
+    //Read program parameters, with default values N=10, eps=1e-8 and maxIterations=1e5 if not specified. 
     double N = argc > 1 ? atof(argv[1]) : 10;
     double eps = argc > 2 ? atof(argv[2]) : 1.0 * pow(10, -8);
+    int maxIterations = argc > 2 ? atof(argv[3]) : 100000;
 
     double h=1.0/(N+1); //Because given in the task is N=n-1 and h=1/N
 
@@ -38,19 +39,19 @@ int main(int argc, char **argv)
     arma::vec eigval_arma;
     arma::mat R_arma;
     arma::eig_sym(eigval_arma, R_arma, A);
-
+/*
     std::cout << "A:" << std::endl;
     std::cout << std::setprecision(4) << A << std::endl;
+*/
 
-    //For checking convergence. Using an arbitrary value 100 for problem 4, will be refined in later tasks.
-    int maxIterations = 10000;
     int actualIterations;
     bool converged;
+        
         // get eigenvalues from the diag of A
     arma::vec eigval = arma::vec(N);
 
     jacobi_eigensolver(A, eps, eigval, R, maxIterations, actualIterations, converged);
-
+/*
     // print
     std::cout << std::endl
               << "Eigenvalues from the Jacobi rotation method:" << std::endl;
@@ -68,7 +69,7 @@ int main(int argc, char **argv)
     std::cout << std::endl
               << "Eigenvectors from Armadillo:" << std::endl;
     std::cout << std::setprecision(4) << R_arma << std::endl;
-
+*/
     std::cout << "Converged=" << converged << " after " << actualIterations << " iterations" << std::endl;
 
     return 0;
