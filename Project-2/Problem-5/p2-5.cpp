@@ -9,23 +9,30 @@
 #include <cmath>
 #include <iomanip>
 
-int main()
+int main(int argc, char **argv)
 {
-    double eps = 1.0 * pow(10, -8);
-    //double h = 0.1;
-    int N = 6;
-double h=0.1;
+
+    if (argc > 3)
+    {
+        throw std::invalid_argument("Usage: ./problem5 <size N of A> <eps>");
+    }
+
+    //Read program parameters, with default values N=10 and eps=1e-8 if not specified. 
+    double N = argc > 1 ? atof(argv[1]) : 10;
+    double eps = argc > 2 ? atof(argv[2]) : 1.0 * pow(10, -8);
+
+    double h=1.0/(N+1); //Because given in the task is N=n-1 and h=1/N
 
     // initialize random
     srand(time(0));
 
     arma::mat R = arma::mat(N, N).eye();
-    // Generate random N*N matrix
-    //arma::mat A = arma::mat(N, N).randn();
+
+    // Generating matrix A that corresponds to the actual differential equation to solve, with step length as specified by parameters. 
     arma::mat A=create_tridiagonal(N, h);
 
     // Symmetrize the matrix by reflecting the upper triangle to lower triangle
-    A = arma::symmatu(A);
+    //A = arma::symmatu(A);
 
     // compare with Armadillo
     arma::vec eigval_arma;
@@ -36,7 +43,7 @@ double h=0.1;
     std::cout << std::setprecision(4) << A << std::endl;
 
     //For checking convergence. Using an arbitrary value 100 for problem 4, will be refined in later tasks.
-    int maxIterations = 100;
+    int maxIterations = 10000;
     int actualIterations;
     bool converged;
         // get eigenvalues from the diag of A
@@ -61,6 +68,8 @@ double h=0.1;
     std::cout << std::endl
               << "Eigenvectors from Armadillo:" << std::endl;
     std::cout << std::setprecision(4) << R_arma << std::endl;
+
+    std::cout << "Converged=" << converged << " after " << actualIterations << " iterations" << std::endl;
 
     return 0;
 }
