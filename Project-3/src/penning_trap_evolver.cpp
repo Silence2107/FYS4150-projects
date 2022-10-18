@@ -17,6 +17,6 @@ void PenningTrap::evolve_forward_Euler(double dt)
 		arma::vec force = external_force_field(temp_r, m_particles[i].v, m_particles[i].q);
 		double mass = m_particles[i].m;
 		
-		m_particles[i].v += m_particles[i].v % force / mass * dt;
+		m_particles[i].v += force / mass * dt;
 	}
 }
