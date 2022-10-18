@@ -67,6 +67,18 @@ public:
     /// @param perturbed_particle particle for which the force is calculated (you may want to pass different positions and velocities here)
     /// @return total force field on the particle
     const arma::vec interaction_force_on_a_particle(size_t excluded_particle_index, const Particle &perturbed_particle) const;
+
+    /// @brief The total force on particle_i from both external fields and other particles
+    /// @param excluded_particle_index index of the particle in the trap, which we exclude from the calculation (the one that we calculate the force on)
+    /// @return total force field on the particle
+    arma::vec total_force(int excluded_particle_index);
+    /// @brief Evolve the system one time step (dt) using Runge-Kutta 4th order
+    /// @param excluded_particle_index Time step to advance the solution
+    void evolve_RK4(double dt);
+    /// @brief Evolve the system one time step (dt) using Forward Euler
+    /// @param excluded_particle_index Time step to advance the solution
+    void evolve_forward_Euler(double dt);
+
 };
 
 #endif
