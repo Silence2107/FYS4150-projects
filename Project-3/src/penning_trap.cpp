@@ -22,8 +22,8 @@ void PenningTrap::add_particle(const Particle &particle)
 const arma::vec PenningTrap::external_force_field(const arma::vec &r, const arma::vec &v, double q) const
 {
     arma::vec F = arma::zeros<arma::vec>(3);
-    F(0) = q * (m_V0 / (m_d * m_d) * r(0) + m_B0 * v(2));
-    F(1) = q * (m_V0 / (m_d * m_d) * r(1) - m_B0 * v(1));
+    F(0) = q * (m_V0 / (m_d * m_d) * r(0) + m_B0 * v(1));
+    F(1) = q * (m_V0 / (m_d * m_d) * r(1) - m_B0 * v(0));
     F(2) = -2 * q * m_V0 / (m_d * m_d) * r(2);
     return F;
 }
