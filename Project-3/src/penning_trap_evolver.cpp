@@ -38,27 +38,42 @@ void PenningTrap::evolve_RK4(double dt)
 
 		// Using the Runga Kutta order 4 formula for coupled equiations.
 
-		//For each particle, compute k_r,1 and k_v,1.
+		// For each particle, compute k_r,1 and k_v,1.
 		arma::vec kr1 = dt * m_particles[i].v;
 		arma::vec kv1 = dt / mass * external_force_field(m_particles[i].r, m_particles[i].v, m_particles[i].q);
 
-		//For each particle, update the position and velocity using the corresponding k_r,1 and k_v,1.
-//		m_particles[i].r = 
-//		m_particles[i].v = 
+		// For each particle, update the position and velocity using the corresponding k_r,1 and k_v,1.
+		m_particles[i].r += kr1 / 2;
+		m_particles[i].v += kv1 / 2;
 
-//For each particle, compute k_r,2 and k_v,2.
-//... several steps
-//Final step: For each particle, perform the proper RK4 update of position and velocity using the original particle position and velocity, together with all the  and  computed above.
-/* TODO: work in progress, below is only sketch of algorithm
-...
-		double kr = (kr1 + 2 * kr2 + 2 * kr3 + kr4) / 6;
-...
-		double kv1 = h * external_force_field(x0, y0);
-		double kv2 = h * external_force_field((x0 + h / 2), (y0 + kv1 / 2));
-		double kv3 = h * external_force_field((x0 + h / 2), (y0 + kv2 / 2));
-		double kv4 = h * external_force_field((x0 + h), (y0 + kv3));
-		double kv = (kv1 + 2 * kv2 + 2 * kv3 + kv4) / 6;
-*/
+		// For each particle, compute k_r,2 and k_v,2.
+		arma::vec kr2 = dt * m_particles[i].v;
+		arma::vec kv2 = dt / mass * external_force_field(m_particles[i].r, m_particles[i].v, m_particles[i].q);
 
+		// For each particle, update the position and velocity using the corresponding k_r,2 and k_v,2.
+		m_particles[i].r = temp_r + kr2 / 2;
+		m_particles[i].v = temp_v + kv2 / 2;
+
+		// For each particle, compute k_r,3 and k_v,3.
+		arma::vec kr3 = dt * m_particles[i].v;
+		arma::vec kv3 = dt / mass * external_force_field(m_particles[i].r, m_particles[i].v, m_particles[i].q);
+
+		// For each particle, update the position and velocity using the corresponding k_r,3 and k_v,3.
+		m_particles[i].r = temp_r + kr3 / 2;
+		m_particles[i].v = temp_v + kv3 / 2;
+
+		// For each particle, compute k_r,4 and k_v,4.
+		arma::vec kr4 = dt * m_particles[i].v;
+		arma::vec kv4 = dt / mass * external_force_field(m_particles[i].r, m_particles[i].v, m_particles[i].q);
+
+		arma::vec kv = (kv1 + 2 * kv2 + 2 * kv3 + kv4) / 6;
+		arma::vec kr = (kr1 + 2 * kr2 + 2 * kr3 + kr4) / 6;
+
+		// Final step: For each particle, perform the proper RK4 update of position and velocity using the original particle position and velocity, together with all the k_r and k_v computed above.
+		m_particles[i].r = temp_r + kr;
+		m_particles[i].v = temp_v + kv;
+
+		m_particles[i].r = temp_r + kr3 / 2;
+		m_particles[i].v = temp_v + kv3 / 2;
 	}
 }
