@@ -10,18 +10,21 @@
 
 int main()
 {
-  double Ca40mass = 66.52948e-24;
-  double Ca40charge = 1.602176e-19;
+  double B0 = 9.65e1;
+  double V0 = 2.41e6;
+  double dCharacteristicDimension = 500;
+  double Ca40mass = 40; //40u
+  double Ca40charge = 1; //1 elementary charge
 
-  PenningTrap trap(1, 1, 1);
-  Particle particle1(Ca40charge, Ca40mass, {20e-6, 0, 20 - 6}, {0, 25 - 6, 0}),
-      particle2(Ca40charge, Ca40mass, {25 - 6, 25 - 6, 0}, {0, 40 - 6, 5 - 6});
+  PenningTrap trap(B0, V0, dCharacteristicDimension);
+  Particle particle1(Ca40charge, Ca40mass, {20, 0, 20}, {0, 25, 0}),
+      particle2(Ca40charge, Ca40mass, {25, 25, 0}, {0, 40, 5});
   // add a few particles
   trap.add_particle(particle1);
   trap.add_particle(particle2);
 
-  double endTime = 50e-6; // 50 microseconds
-  double dt = 0.1e-6;
+  double endTime = 50; // 50 microseconds
+  double dt = 0.1;
 
   double n = endTime / dt;
   std::vector<double> x1(n + 1);
