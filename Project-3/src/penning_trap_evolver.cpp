@@ -9,7 +9,7 @@ void PenningTrap::evolve_forward_Euler(double dt)
 {
 	for (size_t i = 0; i < m_particles.size(); i++)
 	{
-		std::cout << "Forward Euler on particle " << i << " at " << m_particles[i].r << " velocity: " << m_particles[i].v << std::endl;
+		//std::cout << "Forward Euler on particle " << i << " at " << m_particles[i].r << " velocity: " << m_particles[i].v << std::endl;
 		arma::vec temp_r = m_particles[i].r;
 		m_particles[i].r += m_particles[i].v * dt;
 
@@ -29,7 +29,7 @@ void PenningTrap::evolve_RK4(double dt)
 
 	for (size_t i = 0; i < m_particles.size(); i++)
 	{
-		std::cout << "Runga Kutta 4 step particle " << i << " at " << m_particles[i].r << " velocity: " << m_particles[i].v << std::endl;
+		//std::cout << "Runga Kutta 4 step particle " << i << " at " << m_particles[i].r << " velocity: " << m_particles[i].v << std::endl;
 		// Storing copy of position for one particle, to allow stepping r and v in sync (ie stepping v using the corresponding r not the next one).
 		arma::vec temp_r = m_particles[i].r;
 		arma::vec temp_v = m_particles[i].v;
