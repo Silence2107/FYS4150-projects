@@ -23,6 +23,7 @@ int main()
 
     trap.particle_numbers();
 
+    std::cout << "Hello, World!" << std::endl;
 
 
 }
