@@ -13,15 +13,16 @@ int main()
 
     arma::arma_rng::set_seed(1000);
 
-    //for (size_t i = 0; i < m_particles.size(); i++){
-    //}
+    int particles = 2; //particle numbers
 
-    arma::vec r = arma::vec(3).randn()*0.1*trap.d();
-    arma::vec v = arma::vec(3).randn()*0.1*trap.d();
+    for (size_t i = 0; i < particles; i++){
 
-    Particle particle1(-5.3, 1, r, v), particle2(4.2, 3, {1, 2.1, 1}, {-1, 1, -1});
-    // add a few particles
-    //trap.add_particle(particle1);
-    //trap.add_particle(particle2);
+      //generate random position and velocity according to a normal distribution
+      arma::vec r = arma::vec(3).randn()*0.1*trap.d();
+      arma::vec v = arma::vec(3).randn()*0.1*trap.d();
 
+      //generate particle and add it to the system
+      Particle particle(-5.3, 1, r, v);
+      trap.add_particle(particle);
+    }
 }
