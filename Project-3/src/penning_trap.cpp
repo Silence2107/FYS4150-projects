@@ -51,6 +51,7 @@ const arma::vec PenningTrap::interaction_force_on_a_particle(size_t excluded_par
     return interaction_force_on_a_particle(excluded_particle_index, Particle(m_particles[excluded_particle_index].q, m_particles[excluded_particle_index].m, perturbed_r, perturbed_v));
 }
 
+//counts the number of particles inside the trap
 void PenningTrap::particle_numbers(){
-  std::cout << m_particles[1].r;
+  //std::cout << m_particles.size();
 }
