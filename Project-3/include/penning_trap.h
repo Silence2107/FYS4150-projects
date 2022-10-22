@@ -1,12 +1,13 @@
 #ifndef PENNING_TRAP_H
 #define PENNING_TRAP_H
 
-#include "particle.h"
+#include "particle.hpp"
 
 #include <functional>
 #include <vector>
 #include <armadillo>
 
+/// @brief Class that provides Penning trap functionality.
 class PenningTrap
 {
 private:
