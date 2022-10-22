@@ -1,5 +1,5 @@
 #include "../include/penning_trap.h"
-#include "../include/particle.h"
+#include "../include/particle.hpp"
 
 #include <functional>
 #include <vector>

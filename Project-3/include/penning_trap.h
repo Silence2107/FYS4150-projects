@@ -81,10 +81,9 @@ public:
     /// @param excluded_particle_index Time step to advance the solution
     void evolve_forward_Euler(double dt);
 
-    //counting number of particles inside the trap
-    //void particle_numbers(const &m_particles);
-    //void particle_numbers(const arma::vec &r, double d);
-    int particle_numbers();
+    /// @brief Amount of particles within trap's reach
+    /// @return amount of particles within trap's reach
+    size_t particle_numbers();
 };
 
 #endif

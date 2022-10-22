@@ -1,5 +1,5 @@
 #include "../include/penning_trap.h"
-#include "../include/particle.h"
+#include "../include/particle.hpp"
 
 #include <functional>
 #include <vector>
@@ -15,7 +15,7 @@ int main()
     trap.add_particle(particle1);
     trap.add_particle(particle2);
 
-	//For now just evolve a few steps. Result will be printed. To be developed further.
+    // For now just evolve a few steps. Result will be printed. To be developed further.
     trap.evolve_RK4(0.01);
     trap.evolve_RK4(0.01);
     trap.evolve_RK4(0.01);
