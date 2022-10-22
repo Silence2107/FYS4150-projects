@@ -21,6 +21,6 @@ int main()
     trap.evolve_forward_Euler(0.01);
     trap.evolve_forward_Euler(0.01);
 
-    //trap.particle_numbers();
+    trap.particle_numbers();
 
 }

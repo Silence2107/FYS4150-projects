@@ -23,7 +23,7 @@ const arma::vec PenningTrap::external_force_field(const arma::vec &r, const arma
 {
 
     //checks that B and E are 0 outside the trap and if not, sets them to zero
-    double r_distance = sqrt( pow(r(0),2) + pow(r(1),2) + pow(r(3),2) );
+    double r_distance = sqrt( pow(r(0),2) + pow(r(1),2) + pow(r(2),2) );
     if (r_distance > m_d){
         double m_B0 = 0;
         double m_v0 = 0;}
@@ -53,5 +53,5 @@ const arma::vec PenningTrap::interaction_force_on_a_particle(size_t excluded_par
 
 //counts the number of particles inside the trap
 void PenningTrap::particle_numbers(){
-  //std::cout << m_particles.size();
+  std::cout << m_particles[0].r << std::endl;
 }
