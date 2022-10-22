@@ -63,7 +63,7 @@ int PenningTrap::particle_numbers(){
 
     double r_distance = sqrt( pow(r0,2) + pow(r1,2) + pow(r2,2) );
 
-    if (r_distance > m_d){
+    if (r_distance < m_d){
         particle_count + 1;}
 }
 
