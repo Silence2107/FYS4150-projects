@@ -9,7 +9,10 @@
 
 int main()
 {
-    PenningTrap trap(1, 1, 1);
+
+    // double potential = 1(1 + f*cos(w*t))
+
+    PenningTrap trap(1, potential, 1);
     Particle particle1(-5.3, 1, {-3.1, 1.2, -2.2}, {0, 0, 0}), particle2(4.2, 3, {1, 2.1, 1}, {-1, 1, -1});
     // add a few particles
     trap.add_particle(particle1);
@@ -19,4 +22,8 @@ int main()
     trap.evolve_forward_Euler(0.01);
     trap.evolve_forward_Euler(0.01);
     trap.evolve_forward_Euler(0.01);
+
+
+    //test
+    //void particle_numbers(arma::vec m_particles)
 }
