@@ -21,9 +21,8 @@ int main()
     trap.evolve_forward_Euler(0.01);
     trap.evolve_forward_Euler(0.01);
 
-    trap.particle_numbers();
-
-    std::cout << "Hello, World!" << std::endl;
+    //prin particle numbers in the trap
+    std::cout << trap.particle_numbers() << std::endl;
 
 
 }
