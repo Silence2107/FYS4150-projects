@@ -84,7 +84,6 @@ public:
     //void particle_numbers(const &m_particles);
     //void particle_numbers(const arma::vec &r, double d);
     int particle_numbers();
-
 };
 
 #endif
