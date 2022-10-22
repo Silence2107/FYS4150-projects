@@ -83,7 +83,7 @@ public:
     //counting number of particles inside the trap
     //void particle_numbers(const &m_particles);
     //void particle_numbers(const arma::vec &r, double d);
-    void particle_numbers();
+    int particle_numbers();
 
 };
 
