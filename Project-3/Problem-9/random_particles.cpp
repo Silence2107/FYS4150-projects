@@ -1,5 +1,5 @@
 #include "../include/penning_trap.h"
-#include "../include/particle.h"
+#include "../include/particle.hpp"
 
 #include "../include/file_io.h"
 
@@ -11,19 +11,28 @@
 
 int main()
 {
-    PenningTrap trap(1, 1, 1);
+
+
+  //DEFINE TIME
+  int endTime = 50;
+  double dt = 0.01;
+  double n = endTime / dt;
+
+    //GENERATE THE PARTICLES
+    double B0 = 9.65e1;
+    double V0 = 2.41e6;
+    double dCharacteristicDimension = 500;
+    double Ca40mass = 40;  // 40u
+    double Ca40charge = 1; // 1 elementary charge
+
+    PenningTrap trap(B0, V0, dCharacteristicDimension);
 
     arma::arma_rng::set_seed(1000);
 
-    int particles = 1; //particle numbers
+    int particles = 5; //particle numbers
 
-    //for printing
-    int endTime = 3;
-    double dt = 0.01;
-    double n = endTime / dt;
     std::vector<double> x1(n + 1);
     std::vector<double> y1(n + 1);
-
 
     for (size_t i = 0; i < particles; i++){
 
@@ -35,20 +44,35 @@ int main()
       y1[0] = r(1);
 
       //generate particle and add it to the system
-      Particle particle(1, 1, r, v);
+      Particle particle(Ca40charge, Ca40mass, r, v);
       trap.add_particle(particle);
     }
 
 
-    for (size_t i = 1; i < n; i++){
-        trap.evolve_forward_Euler_perturbed(dt, i, 1, 1);
-        x1[i] = trap.particles()[0].r[0];
-        y1[i] = trap.particles()[0].r[1];
-        }
+    //EULER FORWARD WITH TIME DEPENDENT PERTUBATION
 
-        //print particle numbers in the trap
-        std::cout << trap.particle_numbers() << std::endl;
+    //initializations
+    //arma::vec wv = arma::linspace(0.2,2.5,116);       //angular frequencies
+    std::vector<double> wv(116);
+    wv[0] = 0.2;
+    std::vector<double> fraction(116);           //fraction of particles
+    //arma::vec fraction = arma::vec(size(wv));
 
-    two_columns_to_csv("particle1.csv", x1, y1, ",", false, 7);
+    //f = 0.1;  //AMPLITUDE
 
+    //calculations
+    //for (size_t i = 0; i < wv.size(); i++)
+    for (int i = 1; i < 117; i++){
+      wv[i] = 0.02 + wv[i-1];
+
+      for (int j = 0; j < n; j++){
+        trap.evolve_forward_Euler(dt);
+      }
+      //calculates fraction of particles in trap/ all the particles
+      fraction[i] = trap.particle_numbers()/particles;
     }
+
+    //write the values to file
+    two_columns_to_csv("fractions_amp_0.1.csv", wv, fraction, " ", false, 7);
+
+}
