@@ -51,13 +51,15 @@ int main()
     //EULER FORWARD WITH TIME DEPENDENT PERTUBATION
 
     //initializations
-    //arma::vec wv = arma::linspace(0.2,2.5,116);       //angular frequencies
-    std::vector<double> wv(116);
+    std::vector<double> wv(116);                 //angular frequencies
     wv[0] = 0.2;
     std::vector<double> fraction(116);           //fraction of particles
-    //arma::vec fraction = arma::vec(size(wv));
 
-    double f = 0;  //AMPLITUDE
+    std::vector<double> x(n + 1);
+    std::vector<double> y(n + 1);
+
+
+    double f = 0.1;  //AMPLITUDE
 
     //calculations
     double V0_start = trap.V0();
@@ -67,6 +69,11 @@ int main()
 
       for (int j = 1; j <= n; j++){
         trap.evolve_forward_Euler(dt);
+
+        //XY
+        x[i] = trap.particles()[0].r[0];
+        y[i] = trap.particles()[0].r[1];
+
         trap.V0() = V0_start * (1 + f*cos(wv[i-1]*j*dt));      //time dependent potential
       }
       //calculates fraction of particles in trap/ all the particles
@@ -75,5 +82,9 @@ int main()
 
     //write the values to file
     two_columns_to_csv("fractions_euler_amp_0_4.csv", wv, fraction, " ", false, 7);
+
+    //XY
+    two_columns_to_csv("xy", x, y, " ", false, 7);
+
 
 }
