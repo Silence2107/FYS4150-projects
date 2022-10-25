@@ -17,11 +17,21 @@ int main()
     double Ca40charge = 1; // 1 elementary charge
 
     PenningTrap trap(B0, V0, dCharacteristicDimension);
-    Particle particle1(Ca40charge, Ca40mass, {20, 0, 20}, {0, 25, 0}),
+
+    arma::arma_rng::set_seed(1000);
+    arma::vec r = arma::vec(3).randu()*0.1*500; //arma::vec("20 0 20");
+    arma::vec v = arma::vec(3).randu()*0.1*500; //arma::vec("0 25 0");
+
+    Particle particle1(Ca40charge, Ca40mass, r, v),
         particle2(Ca40charge, Ca40mass, {25, 25, 0}, {0, 40, 5});
     // add a few particles
     trap.add_particle(particle1);
-    // trap.add_particle(particle2);
+    trap.add_particle(particle2);
+
+
+
+
+
     /*
       double endTime = 50; // 50 microseconds
       double dt = 0.1;
