@@ -16,7 +16,7 @@ int main()
     double Ca40mass = 40;  // 40u
     double Ca40charge = 1; // 1 elementary charge
 
-    double f = 0.1;
+    double f = 0.4;
 
     arma::arma_rng::set_seed(1000);
 
@@ -31,6 +31,7 @@ int main()
     std::vector<double> ang(freq_num);
     std::vector<double> frac(freq_num);
     std::vector<double> particle_numb(freq_num);
+
 
     arma::vec ang_pre = arma::linspace(0.2, 2.5, freq_num);
     for (size_t i = 0; i < ang_pre.size(); i++){
@@ -67,7 +68,8 @@ for (size_t w = 0; w < ang.size(); w++){
         z1[i] = trap.particles()[499].r[2];
 
         trap.evolve_RK4(dt);
-        trap.V0() = V0 * (1 + f*cos(ang[w]*n*dt));
+        trap.V0() = V0 * (1 + f*cos(ang[w]*i*dt));
+
     }
 
       x1[n] = trap.particles()[499].r[0];
@@ -77,9 +79,9 @@ for (size_t w = 0; w < ang.size(); w++){
       particle_numb[w] = trap.particle_numbers();
       frac[w] = particle_numb[w]/particles;
 
-      std::cout << "Frequency: " << ang[w] << " " << "   Particle numbers: " << trap.particle_numbers() <<
-      "    " << w+1 << "/" << freq_num << std::endl;
-    // two_columns_to_csv("particle2.csv", x2, y2);
+      std::cout << w+1 << "/" << freq_num << "    " <<
+      "Frequency: " << ang[w] << " " << "   Particle numbers: " << trap.particle_numbers() << std::endl;
+
 }
 
 two_columns_to_csv("last_particle.csv", x1, y1, ",", false, 7);
