@@ -13,5 +13,6 @@
 /// @param index If true, write an index column. Default is false.
 /// @param digits The number of digits to write for each number. Default is 7.
 void two_columns_to_csv(const std::string &fpath, const std::vector<double> &x, const std::vector<double> &y, const std::string &separator = ",", bool index = false, size_t digits = 7);
+void three_columns_to_csv(const std::string& fpath, const std::vector<double>& x, const std::vector<double>& y, const std::vector<double>& z, const std::string &separator = ",", bool index = false, size_t digits = 7);
 
 #endif
