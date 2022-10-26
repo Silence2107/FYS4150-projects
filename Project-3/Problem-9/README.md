@@ -1,7 +1,7 @@
 # Problem 9 manual
 
 Simulates a trap consisting of singly charged Calcium ions. Switching off Coulomb interactions is done in random_ca.cpp file where it says
-`trap.enable_particle_interaction([]const Particle &p1, const Particle &p2)` 
+`trap.enable_particle_interaction([](const Particle &p1, const Particle &p2)` 
 by replacing 
 `return 1.389 * 100000.0 / arma::dot(p1.r - p2.r, p1.r - p2.r) * p1.q * p2.q * arma::normalise(p2.r - p1.r); });`
 with
