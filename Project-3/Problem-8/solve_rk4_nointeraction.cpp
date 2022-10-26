@@ -23,12 +23,9 @@ int main()
     //A the partciles to the trap.
     trap.add_particle(particle1);
     trap.add_particle(particle2);
-    
-    trap.enable_particle_interaction([](const Particle &p1, const Particle &p2)
-                                     {
-        // Coulomb force
-        return 1.389 * 100000.0 / arma::dot(p1.r - p2.r, p1.r - p2.r) * p1.q * p2.q * arma::normalise(p2.r - p1.r); });
-    
+
+	//TODO: Parameterize interaction with argc/argv to avoid duplicate file.
+
     double endTime = 50; // 50 microseconds
     double dt = 0.001;
 
