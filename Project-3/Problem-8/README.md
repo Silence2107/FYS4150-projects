@@ -18,3 +18,7 @@ Run (in exactly this order):
 `python3 plot_super_imposed.py`
 `./rk4int.out`
 `python3 plot_super_imposed_interact.py`
+
+A couple things to note:
+We talk about the result of euler.out in the report but do not actually show plots from it, so it's basically optional to run here. 
+A lot of code is duplicated. This is purely due to severe lack of time near the end of the project. We know we should have controlled behavior by parameter, and not clone the cpp-file.
