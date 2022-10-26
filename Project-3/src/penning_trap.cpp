@@ -25,8 +25,7 @@ const arma::vec PenningTrap::external_force_field(const arma::vec &r, const arma
     double r_distance = sqrt(pow(r(0), 2) + pow(r(1), 2) + pow(r(2), 2));
     if (r_distance > m_d)
     {
-        double m_B0 = 0;
-        double m_v0 = 0;
+        return {0, 0, 0};
     }
 
     arma::vec F = arma::zeros<arma::vec>(3);
@@ -66,7 +65,7 @@ size_t PenningTrap::particle_numbers()
         double r_distance = sqrt(pow(r0, 2) + pow(r1, 2) + pow(r2, 2));
         if (r_distance < m_d)
         {
-            particle_count + 1;
+            ++particle_count;
         }
     }
 
