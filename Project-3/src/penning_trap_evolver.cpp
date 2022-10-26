@@ -7,18 +7,20 @@
 
 void PenningTrap::evolve_forward_Euler(double dt)
 {
+	auto particles_temp = m_particles;
 	for (size_t i = 0; i < m_particles.size(); i++)
 	{
 		// std::cout << "Forward Euler on particle " << i << " at " << m_particles[i].r << " velocity: " << m_particles[i].v << std::endl;
 		// arma::vec temp_r = m_particles[i].r;
-		m_particles[i].r += m_particles[i].v * dt;
+		particles_temp[i].r += dt * m_particles[i].v;
 
 		// TODO: Replace external_force_field with total_force once we are ready for multi particle calculations.
 		arma::vec force = total_force_on_a_particle(i, m_particles[i].r, m_particles[i].v);
 		double mass = m_particles[i].m;
 
-		m_particles[i].v += force / mass * dt;
+		particles_temp[i].v += dt / mass * force;
 	}
+	m_particles = particles_temp;
 }
 
 void PenningTrap::evolve_RK4(double dt)
@@ -26,7 +28,7 @@ void PenningTrap::evolve_RK4(double dt)
 	// TODO: When we come to multi particle interaction, we need a temporary copy of every particle before starting.
 	// Quoting task: "since we’ll need the original positions and velocities to perform the final RK4 update step."
 	// Also then replace external_force_field with total_force just as with Forward Euler above.
-
+	
 	for (size_t i = 0; i < m_particles.size(); i++)
 	{
 		// std::cout << "Runga Kutta 4 step particle " << i << " at " << m_particles[i].r << " velocity: " << m_particles[i].v << std::endl;
@@ -72,8 +74,5 @@ void PenningTrap::evolve_RK4(double dt)
 		// Final step: For each particle, perform the proper RK4 update of position and velocity using the original particle position and velocity, together with all the k_r and k_v computed above.
 		m_particles[i].r = temp_r + kr;
 		m_particles[i].v = temp_v + kv;
-
-		m_particles[i].r = temp_r + kr3 / 2;
-		m_particles[i].v = temp_v + kv3 / 2;
 	}
 }
