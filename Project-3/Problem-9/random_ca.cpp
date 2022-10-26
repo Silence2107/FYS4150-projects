@@ -58,7 +58,7 @@ for (size_t w = 0; w < ang.size(); w++){
       trap.add_particle(particle);
 
       //enable or disable particle interactions
-      trap.enable_particle_interaction([]const Particle &p1, const Particle &p2){
+      trap.enable_particle_interaction([](const Particle &p1, const Particle &p2){
         //Coulomb force:
         return 1.389 * 100000.0 / arma::dot(p1.r - p2.r, p1.r - p2.r) * p1.q * p2.q * arma::normalise(p2.r - p1.r); });
         //switch off Coulomb force:
@@ -67,7 +67,7 @@ for (size_t w = 0; w < ang.size(); w++){
 
       }
 
-    //Forward Euler method
+    //Forward Euler method, storing xy coordinates for the last particle
     for (int i = 0; i < n; i++)
     {
 
