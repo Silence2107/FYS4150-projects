@@ -24,3 +24,6 @@ Make plot for last particle in the xy plane:
 Plot the fraction of particles trapped as a function of frequency:
 
 `python3 plotter3_fraction.py --csv "fraction.csv"`
+
+
+In addition, there is an extra file called particle_numbers.csv containing information on particle numbers as a function of frequency.
