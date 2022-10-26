@@ -19,7 +19,7 @@ int main()
     trap.enable_particle_interaction([](const Particle &p1, const Particle &p2)
                                      {
         // Coulomb force
-        return 1.0 / arma::dot(p1.r - p2.r, p1.r - p2.r) * p1.q * p2.q * arma::normalise(p2.r - p1.r); });
+        return 1.389 * 100000.0 / arma::dot(p1.r - p2.r, p1.r - p2.r) * p1.q * p2.q * arma::normalise(p2.r - p1.r); });
     std::cout << trap.interaction_force_on_a_particle(1, particle2); // interaction force on particle2 due to particle1
     trap.add_particle(Particle(1, 1, {0, 0, 0}, {0, 0, 0})); // add a third particle
     // calculate force on particle2 due to particle1 and particle3, but with changed position of particle2
