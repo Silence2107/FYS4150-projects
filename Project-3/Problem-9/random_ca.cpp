@@ -21,13 +21,13 @@ int main()
     arma::arma_rng::set_seed(1000);
 
     double endTime = 500; // microseconds
-    double dt = 0.01;
+    double dt = 0.001;
 
     double n = endTime / dt;
 
     int freq_num = 116;
-    int particles = 100;
-    int particle_plot_number = 99;
+    int particles = 30;
+    int particle_plot_number = particles-1;
 
     std::vector<double> ang(freq_num);
     std::vector<double> frac(freq_num);
@@ -56,6 +56,13 @@ for (size_t w = 0; w < ang.size(); w++){
 
       Particle particle(Ca40charge, Ca40mass, r, v);
       trap.add_particle(particle);
+
+      trap.enable_particle_interaction([]const Particle &p1, const Particle &p2){
+        //Coulomb force:
+        return 1.389 * 100000.0 / arma::dot(p1.r - p2.r, p1.r - p2.r) * p1.q * p2.q * arma::normalise(p2.r - p1.r); });
+        //switch off Coulomb force:
+        //return arma::vec({0, 0, 0}); });
+
 
       }
 
@@ -88,6 +95,5 @@ for (size_t w = 0; w < ang.size(); w++){
 two_columns_to_csv("last_particle.csv", x1, y1, ",", false, 7);
 two_columns_to_csv("particle_numbers.csv", ang, particle_numb, ",", false, 7);
 two_columns_to_csv("fraction.csv", ang, frac, ",", false, 7);
-
 
 }
