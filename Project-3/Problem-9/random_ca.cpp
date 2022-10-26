@@ -16,7 +16,7 @@ int main()
     double Ca40mass = 40;  // 40u
     double Ca40charge = 1; // 1 elementary charge
 
-    double f = 0.4;
+    double f = 0.1;
 
     arma::arma_rng::set_seed(1000);
 
@@ -26,7 +26,8 @@ int main()
     double n = endTime / dt;
 
     int freq_num = 116;
-    int particles = 500;
+    int particles = 100;
+    int particle_plot_number = 99;
 
     std::vector<double> ang(freq_num);
     std::vector<double> frac(freq_num);
@@ -50,8 +51,8 @@ for (size_t w = 0; w < ang.size(); w++){
 
     for (int i = 1; i <= particles; i++){
 
-      arma::vec r = arma::vec(3).randu()*0.1*500; //arma::vec("20 0 20");
-      arma::vec v = arma::vec(3).randu()*0.1*500; //arma::vec("0 25 0");
+      arma::vec r = arma::vec(3).randu()*0.1*dCharacteristicDimension; //arma::vec("20 0 20");
+      arma::vec v = arma::vec(3).randu()*0.1*dCharacteristicDimension; //arma::vec("0 25 0");
 
       Particle particle(Ca40charge, Ca40mass, r, v);
       trap.add_particle(particle);
@@ -63,18 +64,18 @@ for (size_t w = 0; w < ang.size(); w++){
     {
 
         // Store particles x and y coordinate after each step, for later plotting.
-        x1[i] = trap.particles()[499].r[0];
-        y1[i] = trap.particles()[499].r[1];
-        z1[i] = trap.particles()[499].r[2];
+        x1[i] = trap.particles()[particle_plot_number].r[0];
+        y1[i] = trap.particles()[particle_plot_number].r[1];
+        z1[i] = trap.particles()[particle_plot_number].r[2];
 
         trap.evolve_RK4(dt);
         trap.V0() = V0 * (1 + f*cos(ang[w]*i*dt));
 
     }
 
-      x1[n] = trap.particles()[499].r[0];
-      y1[n] = trap.particles()[499].r[1];
-      z1[n] = trap.particles()[499].r[2];
+      x1[n] = trap.particles()[particle_plot_number].r[0];
+      y1[n] = trap.particles()[particle_plot_number].r[1];
+      z1[n] = trap.particles()[particle_plot_number].r[2];
 
       particle_numb[w] = trap.particle_numbers();
       frac[w] = particle_numb[w]/particles;
