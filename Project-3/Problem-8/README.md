@@ -14,7 +14,7 @@ Run (in exactly this order):
 
 `./euler.out`
 `./rk4noint.out`
-`python3 plot_everything.py`
+`python3 plot_all_single_plots.py`
 `python3 plot_super_imposed.py`
 `./rk4int.out`
 `python3 plot_super_imposed_interact.py`
