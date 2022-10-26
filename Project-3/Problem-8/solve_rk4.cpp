@@ -24,6 +24,11 @@ int main()
     trap.add_particle(particle1);
     trap.add_particle(particle2);
     
+    trap.enable_particle_interaction([](const Particle &p1, const Particle &p2)
+                                     {
+        // Coulomb force
+        return 1.389 * 100000.0 / arma::dot(p1.r - p2.r, p1.r - p2.r) * p1.q * p2.q * arma::normalise(p2.r - p1.r); });
+    
     double endTime = 50; // 50 microseconds
     double dt = 0.001;
 
@@ -71,7 +76,7 @@ int main()
 
     two_columns_to_csv("particle1xy.csv", x1, y1, ",", false, 7);
     two_columns_to_csv("particle1z.csv", time, z1, ",", false, 7);
-    two_columns_to_csv("particle2xy.csv", x1, y1, ",", false, 7);
+    two_columns_to_csv("particle2xy.csv", x2, y2, ",", false, 7);
     
     three_columns_to_csv("particle1xyz.csv", x1, y1, z1, ",", false, 7);
 
