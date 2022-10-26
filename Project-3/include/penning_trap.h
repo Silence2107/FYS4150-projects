@@ -21,8 +21,10 @@ private:
     /// @brief Particles in the trap
     std::vector<Particle> m_particles;
     /// @brief Function that computes the interaction force from a first particle to a second particle.
-    /// Interaction is assumed to be between no more than 2-particles
-    std::function<arma::vec(const Particle &, const Particle &)> m_force;
+    /// Interaction is assumed to be between no more than 2-particles; Interaction is switched off by default
+    std::function<arma::vec(const Particle &, const Particle &)> m_force = [](const Particle &, const Particle &)
+    { return arma::zeros<arma::vec>(3); };
+
 public:
     /// @brief initializes the trap with the given parameters
     /// @param B0 magnetic field strength
@@ -32,7 +34,7 @@ public:
     PenningTrap(double B0, double V0, double d, const std::vector<Particle> &particles = std::vector<Particle>());
     /// @brief specifies the force function
     /// @param force force function from the first particle applied to the second particle
-    void enable_particle_interaction(const std::function<arma::vec(const Particle &, const Particle &)>& force);
+    void enable_particle_interaction(const std::function<arma::vec(const Particle &, const Particle &)> &force);
     /// @brief adds a particle to the trap
     /// @param particle particle to add
     void add_particle(const Particle &particle);
@@ -70,15 +72,17 @@ public:
     /// @return total force field on the particle
     const arma::vec interaction_force_on_a_particle(size_t excluded_particle_index, const Particle &perturbed_particle) const;
 
-    /// @brief The total force on particle_i from both external fields and other particles
+    /// @brief The total force on perturbed_particle from both external fields and other particles
     /// @param excluded_particle_index index of the particle in the trap, which we exclude from the calculation (the one that we calculate the force on)
+    /// @param perturbed_r perturbed position of a particle for which the force is calculated
+    /// @param perturbed_v perturbed velocity of a particle for which the force is calculated
     /// @return total force field on the particle
-    arma::vec total_force(int excluded_particle_index);
+    const arma::vec total_force_on_a_particle(size_t excluded_particle_index, const arma::vec &perturbed_r, const arma::vec &perturbed_v) const;
     /// @brief Evolve the system one time step (dt) using Runge-Kutta 4th order
-    /// @param excluded_particle_index Time step to advance the solution
+    /// @param dt Time step to advance the solution (must be sufficiently small)
     void evolve_RK4(double dt);
     /// @brief Evolve the system one time step (dt) using Forward Euler
-    /// @param excluded_particle_index Time step to advance the solution
+    /// @param dt Time step to advance the solution (must be sufficiently small)
     void evolve_forward_Euler(double dt);
 
     /// @brief Amount of particles within trap's reach

@@ -72,3 +72,8 @@ size_t PenningTrap::particle_numbers()
 
     return particle_count;
 }
+
+const arma::vec PenningTrap::total_force_on_a_particle(size_t excluded_particle_index, const arma::vec &perturbed_r, const arma::vec &perturbed_v) const
+{
+    return external_force_field(perturbed_r, perturbed_v, m_particles[excluded_particle_index].q) + interaction_force_on_a_particle(excluded_particle_index, perturbed_r, perturbed_v);
+}
