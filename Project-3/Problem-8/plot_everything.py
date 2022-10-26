@@ -36,7 +36,7 @@ plt.savefig('part2xy.pdf')
 
 #3D plot for particle 1
 fig3d = plt.figure().add_subplot(projection='3d')
-data_xyz1 = pd.read_csv("particle2xyz.csv", header=None,
+data_xyz1 = pd.read_csv("particle1xyz.csv", header=None,
                    sep=",", names=['x', 'y', 'z'])
 x1_column = data_xyz1.iloc[: , 0]
 y1_column = data_xyz1.iloc[: , 1]
