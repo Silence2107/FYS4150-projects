@@ -16,7 +16,7 @@ int main()
     double Ca40mass = 40;  // 40u
     double Ca40charge = 1; // 1 elementary charge
 
-    double f = 0.1;
+    double f = 0.1; //amplitude
 
     arma::arma_rng::set_seed(1000);
 
@@ -25,15 +25,15 @@ int main()
 
     double n = endTime / dt;
 
-    int freq_num = 116;
-    int particles = 30;
-    int particle_plot_number = particles-1;
+    int freq_num = 116;                     //number of frequencies
+    int particles = 30;                     //number of particles
+    int particle_plot_number = particles-1; //index of last particle
 
     std::vector<double> ang(freq_num);
     std::vector<double> frac(freq_num);
     std::vector<double> particle_numb(freq_num);
 
-
+    //generating vector of frequencies
     arma::vec ang_pre = arma::linspace(0.2, 2.5, freq_num);
     for (size_t i = 0; i < ang_pre.size(); i++){
       ang[i] = ang_pre[i];
@@ -57,6 +57,7 @@ for (size_t w = 0; w < ang.size(); w++){
       Particle particle(Ca40charge, Ca40mass, r, v);
       trap.add_particle(particle);
 
+      //enable or disable particle interactions
       trap.enable_particle_interaction([]const Particle &p1, const Particle &p2){
         //Coulomb force:
         return 1.389 * 100000.0 / arma::dot(p1.r - p2.r, p1.r - p2.r) * p1.q * p2.q * arma::normalise(p2.r - p1.r); });
@@ -66,7 +67,7 @@ for (size_t w = 0; w < ang.size(); w++){
 
       }
 
-
+    //Forward Euler method
     for (int i = 0; i < n; i++)
     {
 
@@ -84,9 +85,11 @@ for (size_t w = 0; w < ang.size(); w++){
       y1[n] = trap.particles()[particle_plot_number].r[1];
       z1[n] = trap.particles()[particle_plot_number].r[2];
 
+      //Particle numbers and fraction calculations
       particle_numb[w] = trap.particle_numbers();
       frac[w] = particle_numb[w]/particles;
 
+      //Printing progress
       std::cout << w+1 << "/" << freq_num << "    " <<
       "Frequency: " << ang[w] << " " << "   Particle numbers: " << trap.particle_numbers() << std::endl;
 
