@@ -10,6 +10,7 @@
 #include <string>
 #include <fstream>
 
+#include "../include/ising.h"
 
 //We make the namespaces implicit now - benefit of short notation outweights risk for confusion/clashes.
 using namespace std;
@@ -59,22 +60,21 @@ void performOneMonteCarloUpdate(imat& A, size_t L, double beta, uniform_real_dis
 	int spinLeft = A(randomRow, (randomCol-1)%L);
 	int spinRight = A(randomRow, (randomCol+1)%L);
 	int sumOfNeightborSpins = spinLeft+spinRight+spinAbove+spinBelow;
-	//Recall that total energy is the sum of all products J*Sk*Sl with J coupling contant and Sk,Sl neighbors. 
+	//Recall that total energy is the sum of all products -J*Sk*Sl with J coupling contant and Sk,Sl neighbors. 
 	//For local energy change, only take the sum of all products of flipped spin with it's 4 neighbor spins.
-	//Also J is unity with our units chosen. Thus "local energy" is simply this product:
-	double oldLocalEnergy = oldSpin*sumOfNeightborSpins;
-	double newLocalEnergy = newSpin*sumOfNeightborSpins;
+	//Also J is unity with our units chosen. Thus "local energy" is simply this product (note minus sign from the physical formula):
+	double oldLocalEnergy = -oldSpin*sumOfNeightborSpins;
+	double newLocalEnergy = -newSpin*sumOfNeightborSpins;
 	double energyDifference = newLocalEnergy-oldLocalEnergy;
 	//Now the probability ratio is equal to ratio of exp(-beta*energy)/Z before and after but Z cancels and the exponentials can be combined to
 	//just exp(-beta*energyDifference). But we wait a few lines calculating this since it's not certain we even need this. 
 	
-	int flipped = 0;
 	//Step 3. Generate r ~ U(0,1) and carry out accept/reject steps.
+	int accept = 0;  //First decide if it's an accept or a reject. 
 	if(energyDifference<=0.0)
 	{
 		//From page 404 in Mortens lecture notes we get a more efficient algorithm by immediately accepting all changes to lower energy state. 
-		A(randomRow, randomCol) = newSpin;
-		flipped = 1;
+		accept = 1;
 	}
 	else
 	{
@@ -83,16 +83,22 @@ void performOneMonteCarloUpdate(imat& A, size_t L, double beta, uniform_real_dis
 		//increase even to the highest allowed but unlikely states. 
 		double r = uniform_dist(generator);
 		double probabilityRatio = exp(-beta*energyDifference);
+		//TODO: As suggested in problem 2b, avoid repeatedly calling exp() by calculating the only 5 possible values beforehand, and store in some table. 
 		//cout << "Comparing probability ratio " << probabilityRatio << " to random number " << r << endl;
 		if (probabilityRatio > r)
 		{
-			A(randomRow, randomCol) = newSpin;
-			flipped = 1;
+			accept = 1;
 		}
+	}
+	if(accept) 
+	{
+		//In case of accept, update spin to the new (flipped) state. 
+		//Otherwise it's a reject and new state is just equal to old state, and no matrix change.
+		A(randomRow, randomCol) = newSpin;
 	}
 	
 	//cout << "Randomly updating (" << randomRow << "," <<  randomCol << ")." << endl;
-	//cout << "Energy difference: " << energyDifference << " Flipped: " << (flipped>0?"yes":"no") << endl;
+	//cout << "Energy difference: " << energyDifference << " accept: " << (accept>0?"yes":"no") << endl;
 }
 
 /*** Calculates energy averaged per site.
@@ -114,7 +120,7 @@ double calculateAverageEnergy(imat& A, size_t L)
 			//The idea is similar to the partial energies in performOneMonteCarloUpdate, but here we instead only
 			//calculate interactions going right and down, and thus avoid double counting. 
 			//The modulus operator % again make the periodic boundary condition work as it should. 
-			totalEnergy += thisSpin*(spinRight+spinBelow);
+			totalEnergy += -thisSpin*(spinRight+spinBelow);
         }
     }
 	return ((double)totalEnergy) / (L*L);  //Divide with number of sites to get average.
@@ -136,70 +142,3 @@ double calculateAverageMagnetization(imat& A, size_t L)
 	return ((double)totalSpin) / (L*L);  //Divide with number of sites to get average.
 }
 
-
-int main(int argc, char **argv)
-{
-
-    if (argc > 4)
-    {
-        throw std::invalid_argument("Usage: ./ising.exe <L width of lattice> <T temperature in J/Kb> <Number MC cycles>");
-    }
-
-    //Read program parameters, with default values L=2, eps=1e-8 and maxIterations=1e5 if not specified. 
-    //L is the width and height of the square lattice of spin sites we calculate on.
-	size_t L = argc > 1 ? atof(argv[1]) : 2;
-	//For temperature T, unit is J/Kb where J is the coupling constant and Kb is Boltzmann's constant. 
-	//See more in https://anderkve.github.io/FYS3150/book/projects/project4.html 
-    double T = argc > 2 ? atof(argv[2]) : 1.0; 
-	//How many Monte Carlo cylces to run before actually start recording samples. 
-    int monteCarlCyclesToRun = argc > 3 ? atof(argv[3]) : 1000;
-	
-	double beta = 1.0/T;  //The standard beta of statistical physics 1/TKb but with the units chosen in this program Kb is already counted in. 
-	size_t N = L*L;  //Total number of sites in lattice.
-	
-	//TODO: Use later: int burnInNumber = 0;  //How many Monte Carlo cylces to run before actually start recording samples.
-	
-	//Random number setup in the way recommended for parallell computing, at https://github.com/anderkve/FYS3150/blob/master/code_examples/random_number_generation/main_rng_in_class_omp.cpp
-	// Use the system clock to get a base seed
-	unsigned int base_seed = chrono::system_clock::now().time_since_epoch().count();
-	// Member variables that hold a <random> generator 
-	// and distribution (uniform distribution [0,1)).
-	mt19937 generator;
-	uniform_real_distribution<double> uniform_dist = uniform_real_distribution<double>(0.0 ,1.0);
-	//generator.seed(my_seed);  //TODO: Once we get to parallellization we will use thread number here. 
-	generator.seed(base_seed);
-  
-	imat latticeMatrix = initRandomSpinMatrix(L, uniform_dist, generator);
-	
-	if(L<10){
-		cout << "Before:" << endl;
-		cout << setprecision(4) << latticeMatrix << endl;
-	}
-	for(int i=0; i<monteCarlCyclesToRun; i++)
-	{
-		for(int j=0; j<N; j++)
-		{
-			//Each Monte Carlo "cycle" is N attempted updates.
-			//Note that N is the number of sites, but it does not mean we attempt every site. The randomness might attempt the same site 
-			//multiple times but this is what we want, as it avoids unwanted correlation between transitions. 
-			performOneMonteCarloUpdate(latticeMatrix, L, beta, uniform_dist, generator);
-		}
-		if((i+1)%10==0){
-			cout << (i+1) << " iterations run" << endl;
-		}
-		//double avgEnergy = calculateAverageEnergy(latticeMatrix, L);
-		//double avgMagnetization = calculateAverageMagnetization(latticeMatrix, L);
-		//TODO: For specificHeat and magneticSusceptibility, need to store each of these avgEnergy and avgMagnetization 
-		//in a vector here, to later calculate standard deviation of these. 
-	}
-	
-	if(L<10){
-		cout << "After:" << endl;
-		cout << setprecision(4) << latticeMatrix << endl;
-	}
-	
-	cout << "Average energy: " << calculateAverageEnergy(latticeMatrix, L) << endl;
-	cout << "Average magnetization: " << calculateAverageMagnetization(latticeMatrix, L) << endl;
-	
-    return 0;
-}
