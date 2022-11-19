@@ -68,13 +68,12 @@ void performOneMonteCarloUpdate(imat& A, size_t L, double beta, uniform_real_dis
 	//Now the probability ratio is equal to ratio of exp(-beta*energy)/Z before and after but Z cancels and the exponentials can be combined to
 	//just exp(-beta*energyDifference). But we wait a few lines calculating this since it's not certain we even need this. 
 	
-	int flipped = 0;
 	//Step 3. Generate r ~ U(0,1) and carry out accept/reject steps.
+	int accept = 0;  //First decide if it's an accept or a reject. 
 	if(energyDifference<=0.0)
 	{
 		//From page 404 in Mortens lecture notes we get a more efficient algorithm by immediately accepting all changes to lower energy state. 
-		A(randomRow, randomCol) = newSpin;
-		flipped = 1;
+		accept = 1;
 	}
 	else
 	{
@@ -83,16 +82,22 @@ void performOneMonteCarloUpdate(imat& A, size_t L, double beta, uniform_real_dis
 		//increase even to the highest allowed but unlikely states. 
 		double r = uniform_dist(generator);
 		double probabilityRatio = exp(-beta*energyDifference);
+		//TODO: As suggested in problem 2b, avoid repeatedly calling exp() by calculating the only 5 possible values beforehand, and store in some table. 
 		//cout << "Comparing probability ratio " << probabilityRatio << " to random number " << r << endl;
 		if (probabilityRatio > r)
 		{
-			A(randomRow, randomCol) = newSpin;
-			flipped = 1;
+			accept = 1;
 		}
+	}
+	if(accept) 
+	{
+		//In case of accept, update spin to the new (flipped) state. 
+		//Otherwise it's a reject and new state is just equal to old state, and no matrix change.
+		A(randomRow, randomCol) = newSpin;
 	}
 	
 	//cout << "Randomly updating (" << randomRow << "," <<  randomCol << ")." << endl;
-	//cout << "Energy difference: " << energyDifference << " Flipped: " << (flipped>0?"yes":"no") << endl;
+	//cout << "Energy difference: " << energyDifference << " accept: " << (accept>0?"yes":"no") << endl;
 }
 
 /*** Calculates energy averaged per site.
