@@ -37,7 +37,7 @@ imat initRandomSpinMatrix(size_t L, uniform_real_distribution<double>& uniform_d
  *   Logic taken from section 12.5 of Morten's lecture notes. 
  *   Nomenclature clarification: As this is a single lattice update attempt, one "Monte Carlo cycle" requires N calls to this method.
  */
-void performOneMonteCarloCycle(imat& A, size_t L, double beta, uniform_real_distribution<double>& uniform_dist, mt19937& generator){
+void performOneMonteCarloUpdate(imat& A, size_t L, double beta, uniform_real_distribution<double>& uniform_dist, mt19937& generator){
 	
 	//Step 1. Generate a candidate state S'
 	//Step 1.1 Pick a random spin (lattice site)
@@ -83,7 +83,7 @@ void performOneMonteCarloCycle(imat& A, size_t L, double beta, uniform_real_dist
 		//increase even to the highest allowed but unlikely states. 
 		double r = uniform_dist(generator);
 		double probabilityRatio = exp(-beta*energyDifference);
-		cout << "Comparing probability ratio " << probabilityRatio << " to random number " << r << endl;
+		//cout << "Comparing probability ratio " << probabilityRatio << " to random number " << r << endl;
 		if (probabilityRatio > r)
 		{
 			A(randomRow, randomCol) = newSpin;
@@ -91,8 +91,8 @@ void performOneMonteCarloCycle(imat& A, size_t L, double beta, uniform_real_dist
 		}
 	}
 	
-	cout << "Randomly updating (" << randomRow << "," <<  randomCol << ")." << endl;
-	cout << "Energy difference: " << energyDifference << " Flipped: " << (flipped>0?"yes":"no") << endl;
+	//cout << "Randomly updating (" << randomRow << "," <<  randomCol << ")." << endl;
+	//cout << "Energy difference: " << energyDifference << " Flipped: " << (flipped>0?"yes":"no") << endl;
 }
 
 /*** Calculates energy averaged per site.
@@ -111,7 +111,7 @@ double calculateAverageEnergy(imat& A, size_t L)
 			int thisSpin = A(i, j);
 			int spinBelow = A((i+1)%L, j);
 			int spinRight = A(i, (j+1)%L);
-			//The idea is similar to the partial energies in performOneMonteCarloCycle, but here we instead only
+			//The idea is similar to the partial energies in performOneMonteCarloUpdate, but here we instead only
 			//calculate interactions going right and down, and thus avoid double counting. 
 			//The modulus operator % again make the periodic boundary condition work as it should. 
 			totalEnergy += thisSpin*(spinRight+spinBelow);
@@ -140,7 +140,7 @@ double calculateAverageMagnetization(imat& A, size_t L)
 int main()
 {
 
-	size_t L = 4; //Hard coded lattice size 2 for now. TODO: parameterize
+	size_t L = 50; //Hard coded lattice size 2 for now. TODO: parameterize
 	
 	double T = 1.0;  //Hard coded temperature 1 for now. TODO: parameterize
 	//Unit is J/Kb where J is the coupling constant mentioned in https://anderkve.github.io/FYS3150/book/projects/project4.html and Kb is Boltzmann's constant. 
@@ -149,6 +149,7 @@ int main()
 	size_t N = L*L;  //Total number of sites in lattice.
 	
 	int burnInNumber = 0;  //How many Monte Carlo cylces to run before actually start recording samples. 
+	int monteCarlCyclesToRun = 1000;  //How many Monte Carlo cylces to run before actually start recording samples. 
 	
 	//Random number setup in the way recommended for parallell computing, at https://github.com/anderkve/FYS3150/blob/master/code_examples/random_number_generation/main_rng_in_class_omp.cpp
 	// Use the system clock to get a base seed
@@ -162,24 +163,28 @@ int main()
   
 	imat latticeMatrix = initRandomSpinMatrix(L, uniform_dist, generator);
 	
+	if(L<10){
+		cout << "Before:" << endl;
+		cout << setprecision(4) << latticeMatrix << endl;
+	}
+	for(int i=0; i<monteCarlCyclesToRun; i++)
+	{
+		for(int j=0; j<N; j++)
+		{
+			//Each Monte Carlo "cycle" is N attempted updates.
+			//Note that N is the number of sites, but it does not mean we attempt every site. The randomness might attempt the same site 
+			//multiple times but this is what we want, as it avoids unwanted correlation between transitions. 
+			performOneMonteCarloUpdate(latticeMatrix, L, beta, uniform_dist, generator);
+		}
+		if((i+1)%10==0){
+			cout << (i+1) << " iterations run" << endl;
+		}
+	}
 	
-    std::cout << "Before:" << std::endl;
-    std::cout << std::setprecision(4) << latticeMatrix << std::endl;
-	
-	performOneMonteCarloCycle(latticeMatrix, L, beta, uniform_dist, generator);
-
-    std::cout << "After:" << std::endl;
-    std::cout << std::setprecision(4) << latticeMatrix << std::endl;
-	
-	performOneMonteCarloCycle(latticeMatrix, L, beta, uniform_dist, generator);
-
-    std::cout << "After:" << std::endl;
-    std::cout << std::setprecision(4) << latticeMatrix << std::endl;
-	
-	performOneMonteCarloCycle(latticeMatrix, L, beta, uniform_dist, generator);
-
-    std::cout << "After:" << std::endl;
-    std::cout << std::setprecision(4) << latticeMatrix << std::endl;
+	if(L<10){
+		cout << "After:" << endl;
+		cout << setprecision(4) << latticeMatrix << endl;
+	}
 	
 	cout << "Average energy: " << calculateAverageEnergy(latticeMatrix, L) << endl;
 	cout << "Average magnetization: " << calculateAverageMagnetization(latticeMatrix, L) << endl;
