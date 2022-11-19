@@ -43,12 +43,56 @@ imat initRandomSpinMatrix(size_t L, uniform_real_distribution<double> uniform_di
  *   Logic taken from section 12.5 of Morten's lecture notes. 
  */
 void performOneMonteCarloCycle(imat& A, size_t L, double beta, uniform_real_distribution<double> uniform_dist, mt19937 generator){
+	
+	//Step 1. Generate a candidate state S'
+	//Step 1.1 Pick a random spin (lattice site)
 	int randomRow = (L*uniform_dist(generator));
 	int randomCol = (L*uniform_dist(generator));
+	//Step 1.2 Flip it (storing in local variable - we don't update the actual matrix until acceptance check). 
+	int oldSpin = A(randomRow, randomCol);
+	int newSpin = -oldSpin;
 	
+	//Step 2. Find value of P(S')/P(Si) in an efficient way. 
+	//Total energy of system would require to calculate the sum of all lattice energies, but since we for this algorithm only need the difference 
+	//between old and new state of this particular lattice. 
+	//This also takes into account the notion that we should not double count neighbor interactions. The way we do this with going 4 directions from 
+	//the changed spin makes this correct in this case. If we instead had looped over all lattices we would have only compared right and down instead.
+	//Side note: for the special case 2*2 lattice this still leads to double counting in principle, but we keep the algorithm equivalent regardless, 
+	//as this also makes most sense for the comparasion with analytical results. 
+	int spinLeft = A((randomRow-1)%L, randomCol);
+	int spinRight = A((randomRow+1)%L, randomCol);
+	int spinAbove = A(randomRow, (randomCol-1)%L);
+	int spinBelow = A(randomRow, (randomCol+1)%L);
+	int sumOfNeightborSpins = spinLeft+spinRight+spinAbove+spinBelow;
+	//Recall that total energy is the sum of all products J*Sk*Sl with J coupling contant and Sk,Sl neighbors. 
+	//For local energy change Also J is unity with our units chosen. Thus "local energy" is:
+	double oldLocalEnergy = oldSpin*sumOfNeightborSpins;
+	double newLocalEnergy = newSpin*sumOfNeightborSpins;
+	double energyDifference = newLocalEnergy-oldLocalEnergy;
+	//Now the probability ratio is equal to ratio of exp(-beta*energy)/Z before and after but Z cancels and the exponentials can be combined to
+	//just exp(-beta*energyDifference). But we wait a few lines calculating this since it's not certain we even need this. 
+	
+	int flipped = 0;
+	//Step 3. Generate r ~ U(0,1) and carry out accept/reject steps.
+	if(energyDifference<=0.0)
+	{
+		//From page 404 in Mortens lecture notes we get a more efficient algorithm by immediately accepting all changes to lower energy state. 
+		A(randomRow, randomCol) = newSpin;
+		flipped = 1;
+	}
+	else
+	{
+		double r = uniform_dist(generator);
+		double probabilityRatio = exp(-beta*energyDifference);
+		if (probabilityRatio > r)
+		{
+			A(randomRow, randomCol) = newSpin;
+			flipped = 1;
+		}
+	}
+	//it is enough to only calculate energy 
 	cout << "Randomly updating (" << randomRow << "," <<  randomCol << ")." << endl;
-	
-	A(randomRow, randomCol) = 2.0;
+	cout << "Energy difference: " << energyDifference << " Flipped: " << flipped << endl;
 }
 
 int main()
@@ -78,6 +122,10 @@ int main()
   
 	imat Aints = initRandomSpinMatrix(L, uniform_dist, generator);
 	
+	
+    std::cout << "Before:" << std::endl;
+    std::cout << std::setprecision(4) << Aints << std::endl;
+	
 	performOneMonteCarloCycle(Aints, L, beta, uniform_dist, generator);
 	
     // initialize random
@@ -89,7 +137,7 @@ int main()
 	//arma::imat Aints = arma::imat(L, L).ones();//randn();
 	
 	
-    std::cout << "Aints:" << std::endl;
+    std::cout << "After:" << std::endl;
     std::cout << std::setprecision(4) << Aints << std::endl;
 	
     return 0;
