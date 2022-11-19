@@ -8,6 +8,7 @@ Implement Ising model with Monte Carlo.
 Examples on command lines 
 `./problem4.exe 2`
 `./problem4.exe 2 1 100`
+`./problem4.exe 8 1 100`
+`./problem4.exe 8 4 100`
 `./problem4.exe 50 1 1000`
 `./problem4.exe 50 1 10000`
-
