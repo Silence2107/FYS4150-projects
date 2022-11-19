@@ -137,19 +137,27 @@ double calculateAverageMagnetization(imat& A, size_t L)
 }
 
 
-int main()
+int main(int argc, char **argv)
 {
 
-	size_t L = 50; //Hard coded lattice size 2 for now. TODO: parameterize
-	
-	double T = 1.0;  //Hard coded temperature 1 for now. TODO: parameterize
-	//Unit is J/Kb where J is the coupling constant mentioned in https://anderkve.github.io/FYS3150/book/projects/project4.html and Kb is Boltzmann's constant. 
+    if (argc > 4)
+    {
+        throw std::invalid_argument("Usage: ./ising.exe <L width of lattice> <T temperature in J/Kb> <Number MC cycles>");
+    }
+
+    //Read program parameters, with default values L=2, eps=1e-8 and maxIterations=1e5 if not specified. 
+    //L is the width and height of the square lattice of spin sites we calculate on.
+	size_t L = argc > 1 ? atof(argv[1]) : 2;
+	//For temperature T, unit is J/Kb where J is the coupling constant and Kb is Boltzmann's constant. 
+	//See more in https://anderkve.github.io/FYS3150/book/projects/project4.html 
+    double T = argc > 2 ? atof(argv[2]) : 1.0; 
+	//How many Monte Carlo cylces to run before actually start recording samples. 
+    int monteCarlCyclesToRun = argc > 3 ? atof(argv[3]) : 1000;
 	
 	double beta = 1.0/T;  //The standard beta of statistical physics 1/TKb but with the units chosen in this program Kb is already counted in. 
 	size_t N = L*L;  //Total number of sites in lattice.
 	
-	int burnInNumber = 0;  //How many Monte Carlo cylces to run before actually start recording samples. 
-	int monteCarlCyclesToRun = 1000;  //How many Monte Carlo cylces to run before actually start recording samples. 
+	//TODO: Use later: int burnInNumber = 0;  //How many Monte Carlo cylces to run before actually start recording samples.
 	
 	//Random number setup in the way recommended for parallell computing, at https://github.com/anderkve/FYS3150/blob/master/code_examples/random_number_generation/main_rng_in_class_omp.cpp
 	// Use the system clock to get a base seed
@@ -179,6 +187,10 @@ int main()
 		if((i+1)%10==0){
 			cout << (i+1) << " iterations run" << endl;
 		}
+		//double avgEnergy = calculateAverageEnergy(latticeMatrix, L);
+		//double avgMagnetization = calculateAverageMagnetization(latticeMatrix, L);
+		//TODO: For specificHeat and magneticSusceptibility, need to store each of these avgEnergy and avgMagnetization 
+		//in a vector here, to later calculate standard deviation of these. 
 	}
 	
 	if(L<10){
