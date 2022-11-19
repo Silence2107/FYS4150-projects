@@ -1,10 +1,8 @@
+#ifndef FILE_IO_H
+#define FILE_IO_H
+
 #include <iostream>
 #include <armadillo>
-#include <vector>
-#include <cmath>
-#include <iomanip>
-#include <random>
-#include <chrono>
 
 arma::imat initRandomSpinMatrix(size_t L, std::uniform_real_distribution<double>& uniform_dist, std::mt19937& generator);
 
@@ -21,3 +19,5 @@ void performOneMonteCarloUpdate(arma::imat& A, size_t L, double beta, std::unifo
 double calculateAverageEnergy(arma::imat& A, size_t L);
 
 double calculateAverageMagnetization(arma::imat& A, size_t L);
+
+#endif
