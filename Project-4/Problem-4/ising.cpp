@@ -59,11 +59,11 @@ void performOneMonteCarloUpdate(imat& A, size_t L, double beta, uniform_real_dis
 	int spinLeft = A(randomRow, (randomCol-1)%L);
 	int spinRight = A(randomRow, (randomCol+1)%L);
 	int sumOfNeightborSpins = spinLeft+spinRight+spinAbove+spinBelow;
-	//Recall that total energy is the sum of all products J*Sk*Sl with J coupling contant and Sk,Sl neighbors. 
+	//Recall that total energy is the sum of all products -J*Sk*Sl with J coupling contant and Sk,Sl neighbors. 
 	//For local energy change, only take the sum of all products of flipped spin with it's 4 neighbor spins.
-	//Also J is unity with our units chosen. Thus "local energy" is simply this product:
-	double oldLocalEnergy = oldSpin*sumOfNeightborSpins;
-	double newLocalEnergy = newSpin*sumOfNeightborSpins;
+	//Also J is unity with our units chosen. Thus "local energy" is simply this product (note minus sign from the physical formula):
+	double oldLocalEnergy = -oldSpin*sumOfNeightborSpins;
+	double newLocalEnergy = -newSpin*sumOfNeightborSpins;
 	double energyDifference = newLocalEnergy-oldLocalEnergy;
 	//Now the probability ratio is equal to ratio of exp(-beta*energy)/Z before and after but Z cancels and the exponentials can be combined to
 	//just exp(-beta*energyDifference). But we wait a few lines calculating this since it's not certain we even need this. 
@@ -119,7 +119,7 @@ double calculateAverageEnergy(imat& A, size_t L)
 			//The idea is similar to the partial energies in performOneMonteCarloUpdate, but here we instead only
 			//calculate interactions going right and down, and thus avoid double counting. 
 			//The modulus operator % again make the periodic boundary condition work as it should. 
-			totalEnergy += thisSpin*(spinRight+spinBelow);
+			totalEnergy += -thisSpin*(spinRight+spinBelow);
         }
     }
 	return ((double)totalEnergy) / (L*L);  //Divide with number of sites to get average.
