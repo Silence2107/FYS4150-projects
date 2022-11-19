@@ -18,21 +18,17 @@ using namespace arma;
 
 imat initRandomSpinMatrix(size_t L, uniform_real_distribution<double> uniform_dist, mt19937 generator)
 {
-	imat A = imat(L, L).ones();
-	
+	imat A = imat(L, L).ones();  //Armadillo matrix of integers since we only store spins -1 and 1.
 	for (int i = 0; i < L; ++i)
     {
         for (int j = 0; j < L; ++j)
         {
-			
 			double r = uniform_dist(generator);
 			if (r < 0.5)
 			{
 				A(i,j) = -1;
 			}
-            //cout << spin[i][j] << "    ";
         }
-    //    cout << endl;
     }
 
 	return A;
@@ -82,6 +78,9 @@ void performOneMonteCarloCycle(imat& A, size_t L, double beta, uniform_real_dist
 	}
 	else
 	{
+		//For flip to higher energy, use the other formula from page 404 in Mortens lecture notes. 
+		//This should make the result converg to a Boltzmann distribution, and also ensure ergodicity because there is a small probability to 
+		//increase even to the highest allowed but unlikely states. 
 		double r = uniform_dist(generator);
 		double probabilityRatio = exp(-beta*energyDifference);
 		if (probabilityRatio > r)
@@ -90,7 +89,7 @@ void performOneMonteCarloCycle(imat& A, size_t L, double beta, uniform_real_dist
 			flipped = 1;
 		}
 	}
-	//it is enough to only calculate energy 
+	
 	cout << "Randomly updating (" << randomRow << "," <<  randomCol << ")." << endl;
 	cout << "Energy difference: " << energyDifference << " Flipped: " << flipped << endl;
 }
@@ -98,12 +97,7 @@ void performOneMonteCarloCycle(imat& A, size_t L, double beta, uniform_real_dist
 int main()
 {
 
-    //double eps = 1.0 * pow(10, -8);
-    //double h = 0.1;
-    //int N = 10;
 	size_t L = 2; //Hard lattice size 2 for now. TODO: parameterize
-	
-	//size_t N=L*L;
 	
 	double T = 1.0;  //Hard coded temperature 1 for now. TODO: parameterize
 	//Unit is J/Kb where J is the coupling constant mentioned in https://anderkve.github.io/FYS3150/book/projects/project4.html and Kb is Boltzmann's constant. 
@@ -127,16 +121,17 @@ int main()
     std::cout << std::setprecision(4) << Aints << std::endl;
 	
 	performOneMonteCarloCycle(Aints, L, beta, uniform_dist, generator);
+
+    std::cout << "After:" << std::endl;
+    std::cout << std::setprecision(4) << Aints << std::endl;
 	
-    // initialize random
-    //srand(time(0));
-/*
-    arma::mat R = arma::mat(L, N).eye();
-    // Generate random N*N matrix
-    arma::mat A = arma::mat(N, N).randn();*/
-	//arma::imat Aints = arma::imat(L, L).ones();//randn();
+	performOneMonteCarloCycle(Aints, L, beta, uniform_dist, generator);
+
+    std::cout << "After:" << std::endl;
+    std::cout << std::setprecision(4) << Aints << std::endl;
 	
-	
+	performOneMonteCarloCycle(Aints, L, beta, uniform_dist, generator);
+
     std::cout << "After:" << std::endl;
     std::cout << std::setprecision(4) << Aints << std::endl;
 	
