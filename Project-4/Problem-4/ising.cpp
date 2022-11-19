@@ -32,9 +32,10 @@ imat initRandomSpinMatrix(size_t L, uniform_real_distribution<double>& uniform_d
 	return A;
 }
 
-/*** Perform one cycle of Monte Carlo update using The Metropolis Algorithm.
+/*** Perform one Monte Carlo update using The Metropolis Algorithm.
  *   One spin site as chosen at random, and then another random check is made to decide if spin should flip, taking Boltzmann statistics into account. 
  *   Logic taken from section 12.5 of Morten's lecture notes. 
+ *   Nomenclature clarification: As this is a single lattice update attempt, one "Monte Carlo cycle" requires N calls to this method.
  */
 void performOneMonteCarloCycle(imat& A, size_t L, double beta, uniform_real_distribution<double>& uniform_dist, mt19937& generator){
 	
@@ -97,13 +98,16 @@ void performOneMonteCarloCycle(imat& A, size_t L, double beta, uniform_real_dist
 int main()
 {
 
-	size_t L = 4; //Hard lattice size 2 for now. TODO: parameterize
+	size_t L = 4; //Hard coded lattice size 2 for now. TODO: parameterize
 	
 	double T = 1.0;  //Hard coded temperature 1 for now. TODO: parameterize
 	//Unit is J/Kb where J is the coupling constant mentioned in https://anderkve.github.io/FYS3150/book/projects/project4.html and Kb is Boltzmann's constant. 
 	
 	double beta = 1.0/T;  //The standard beta of statistical physics 1/TKb but with the units chosen in this program Kb is already counted in. 
-
+	size_t N = L*L;  //Total number of sites in lattice.
+	
+	int burnInNumber = 0;  //How many Monte Carlo cylces to run before actually start recording samples. 
+	
 	//Random number setup in the way recommended for parallell computing, at https://github.com/anderkve/FYS3150/blob/master/code_examples/random_number_generation/main_rng_in_class_omp.cpp
 	// Use the system clock to get a base seed
 	unsigned int base_seed = chrono::system_clock::now().time_since_epoch().count();
@@ -111,7 +115,7 @@ int main()
 	// and distribution (uniform distribution [0,1)).
 	mt19937 generator;
 	uniform_real_distribution<double> uniform_dist = uniform_real_distribution<double>(0.0 ,1.0);
-	//my_walker.generator.seed(my_seed);
+	//generator.seed(my_seed);  //TODO: Once we get to parallellization we will use thread number here. 
 	generator.seed(base_seed);
   
 	imat latticeMatrix = initRandomSpinMatrix(L, uniform_dist, generator);
