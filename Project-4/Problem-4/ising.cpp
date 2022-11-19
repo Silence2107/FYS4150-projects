@@ -16,9 +16,9 @@
 using namespace std;
 using namespace arma;
 
-imat initRandomSpinMatrix(size_t L, uniform_real_distribution<double> uniform_dist, mt19937 generator)
+imat initRandomSpinMatrix(size_t L, uniform_real_distribution<double>& uniform_dist, mt19937& generator)
 {
-	imat A = imat(L, L).ones();  //Armadillo matrix of integers since we only store spins -1 and 1.
+	imat A = imat(L, L).ones();  //Armadillo matrix of signed integers since we only store spins -1 and 1.
 	for (int i = 0; i < L; ++i)
     {
         for (int j = 0; j < L; ++j)
@@ -38,12 +38,12 @@ imat initRandomSpinMatrix(size_t L, uniform_real_distribution<double> uniform_di
  *   One spin site as chosen at random, and then another random check is made to decide if spin should flip, taking Boltzmann statistics into account. 
  *   Logic taken from section 12.5 of Morten's lecture notes. 
  */
-void performOneMonteCarloCycle(imat& A, size_t L, double beta, uniform_real_distribution<double> uniform_dist, mt19937 generator){
+void performOneMonteCarloCycle(imat& A, size_t L, double beta, uniform_real_distribution<double>& uniform_dist, mt19937& generator){
 	
 	//Step 1. Generate a candidate state S'
 	//Step 1.1 Pick a random spin (lattice site)
-	int randomRow = (L*uniform_dist(generator));
-	int randomCol = (L*uniform_dist(generator));
+	int randomRow = (int)(L*uniform_dist(generator));
+	int randomCol = (int)(L*uniform_dist(generator));
 	//Step 1.2 Flip it (storing in local variable - we don't update the actual matrix until acceptance check). 
 	int oldSpin = A(randomRow, randomCol);
 	int newSpin = -oldSpin;
