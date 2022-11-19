@@ -16,14 +16,21 @@
 using namespace std;
 using namespace arma;
 
-imat initRandomSpinMatrix(size_t L, uniform_real_distribution<double> &uniform_dist, mt19937 &generator)
+/*** Initialized an unordered state, every spin is set to a random number, +1 or -1 with 50% chance.
+ *   	L: The width/height of the square matrix to produce. 
+ * 		uniform_dist: An initialized uniform_real_distribution. 
+ *      generator: A mt19937 for which the seed should be set. 
+ */
+imat initUnorderedSpinMatrix(size_t L, uniform_real_distribution<double> &uniform_dist, mt19937 &generator)
 {
-	imat A = imat(L, L).ones(); // Armadillo matrix of signed integers since we only store spins -1 and 1.
+	//Start by creating an ordered Matrix, then randomly modify spins. 
+	imat A = initOrderedSpinMatrix(L);
 	for (int i = 0; i < L; ++i)
 	{
 		for (int j = 0; j < L; ++j)
 		{
 			double r = uniform_dist(generator);
+			//Give every element in the Matrix a 50% chance to become -1 instead of 1. 
 			if (r < 0.5)
 			{
 				A(i, j) = -1;
@@ -31,6 +38,14 @@ imat initRandomSpinMatrix(size_t L, uniform_real_distribution<double> &uniform_d
 		}
 	}
 	return A;
+}
+
+/*** Initialize an ordered state, every spin is set to the same state (+1). Parameters:
+ *   	L: The width/height of the square matrix to produce. 
+ */
+imat initOrderedSpinMatrix(size_t L)
+{
+	return imat(L, L).ones(); // Armadillo matrix of signed integers since we only store spins -1 and 1.
 }
 
 /*** Perform one Monte Carlo update using The Metropolis Algorithm.

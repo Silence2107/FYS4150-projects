@@ -48,7 +48,8 @@ int main(int argc, char **argv)
 	// generator.seed(my_seed);  //TODO: Once we get to parallellization we will use thread number here.
 	generator.seed(base_seed);
 
-	imat latticeMatrix = initRandomSpinMatrix(L, uniform_dist, generator);
+	//Setting a random starting matrix. The other alternative is initOrderedSpinMatrix, that will be useful for problem 5b.
+	imat latticeMatrix = initUnorderedSpinMatrix(L, uniform_dist, generator);
 
 	if (L < 10)
 	{
@@ -64,10 +65,10 @@ int main(int argc, char **argv)
 			// multiple times but this is what we want, as it avoids unwanted correlation between transitions.
 			performOneMonteCarloUpdate(latticeMatrix, L, beta, uniform_dist, generator);
 		}
-		if ((i + 1) % 10 == 0)
+		/*if ((i + 1) % 10 == 0)
 		{
 			cout << (i + 1) << " iterations run" << endl;
-		}
+		}*/
 		// double avgEnergy = calculateAverageEnergy(latticeMatrix, L);
 		// double avgMagnetization = calculateAverageMagnetization(latticeMatrix, L);
 		// TODO: For specificHeat and magneticSusceptibility, need to store each of these avgEnergy and avgMagnetization
