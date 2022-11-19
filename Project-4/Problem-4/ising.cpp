@@ -11,8 +11,7 @@
 #include <fstream>
 
 
-//Following convention in examples like https://github.com/anderkve/FYS3150/blob/master/code_examples/random_number_generation/main_rng_in_class_omp.cpp
-//we now consider us ready to use implicit namespaces. 
+//We make the namespaces implicit now - benefit of short notation outweights risk for confusion/clashes.
 using namespace std;
 using namespace arma;
 
@@ -30,7 +29,6 @@ imat initRandomSpinMatrix(size_t L, uniform_real_distribution<double>& uniform_d
 			}
         }
     }
-
 	return A;
 }
 
@@ -55,13 +53,14 @@ void performOneMonteCarloCycle(imat& A, size_t L, double beta, uniform_real_dist
 	//the changed spin makes this correct in this case. If we instead had looped over all lattices we would have only compared right and down instead.
 	//Side note: for the special case 2*2 lattice this still leads to double counting in principle, but we keep the algorithm equivalent regardless, 
 	//as this also makes most sense for the comparasion with analytical results. 
-	int spinLeft = A((randomRow-1)%L, randomCol);
+	int spinLeft = A((randomRow-1)%L, randomCol);  //Modulus operator % makes the period boundary condition work, both ways.
 	int spinRight = A((randomRow+1)%L, randomCol);
 	int spinAbove = A(randomRow, (randomCol-1)%L);
 	int spinBelow = A(randomRow, (randomCol+1)%L);
 	int sumOfNeightborSpins = spinLeft+spinRight+spinAbove+spinBelow;
 	//Recall that total energy is the sum of all products J*Sk*Sl with J coupling contant and Sk,Sl neighbors. 
-	//For local energy change Also J is unity with our units chosen. Thus "local energy" is:
+	//For local energy change, only take the sum of all products of flipped spin with it's 4 neighbor spins.
+	//Also J is unity with our units chosen. Thus "local energy" is simply this product:
 	double oldLocalEnergy = oldSpin*sumOfNeightborSpins;
 	double newLocalEnergy = newSpin*sumOfNeightborSpins;
 	double energyDifference = newLocalEnergy-oldLocalEnergy;
@@ -79,10 +78,11 @@ void performOneMonteCarloCycle(imat& A, size_t L, double beta, uniform_real_dist
 	else
 	{
 		//For flip to higher energy, use the other formula from page 404 in Mortens lecture notes. 
-		//This should make the result converg to a Boltzmann distribution, and also ensure ergodicity because there is a small probability to 
+		//This should make the result converge to a Boltzmann distribution, and also ensure ergodicity because there is a small probability to 
 		//increase even to the highest allowed but unlikely states. 
 		double r = uniform_dist(generator);
 		double probabilityRatio = exp(-beta*energyDifference);
+		cout << "Comparing probability ratio " << probabilityRatio << " to random number " << r << endl;
 		if (probabilityRatio > r)
 		{
 			A(randomRow, randomCol) = newSpin;
@@ -91,13 +91,13 @@ void performOneMonteCarloCycle(imat& A, size_t L, double beta, uniform_real_dist
 	}
 	
 	cout << "Randomly updating (" << randomRow << "," <<  randomCol << ")." << endl;
-	cout << "Energy difference: " << energyDifference << " Flipped: " << flipped << endl;
+	cout << "Energy difference: " << energyDifference << " Flipped: " << (flipped>0?"yes":"no") << endl;
 }
 
 int main()
 {
 
-	size_t L = 2; //Hard lattice size 2 for now. TODO: parameterize
+	size_t L = 4; //Hard lattice size 2 for now. TODO: parameterize
 	
 	double T = 1.0;  //Hard coded temperature 1 for now. TODO: parameterize
 	//Unit is J/Kb where J is the coupling constant mentioned in https://anderkve.github.io/FYS3150/book/projects/project4.html and Kb is Boltzmann's constant. 
@@ -114,26 +114,26 @@ int main()
 	//my_walker.generator.seed(my_seed);
 	generator.seed(base_seed);
   
-	imat Aints = initRandomSpinMatrix(L, uniform_dist, generator);
+	imat latticeMatrix = initRandomSpinMatrix(L, uniform_dist, generator);
 	
 	
     std::cout << "Before:" << std::endl;
-    std::cout << std::setprecision(4) << Aints << std::endl;
+    std::cout << std::setprecision(4) << latticeMatrix << std::endl;
 	
-	performOneMonteCarloCycle(Aints, L, beta, uniform_dist, generator);
+	performOneMonteCarloCycle(latticeMatrix, L, beta, uniform_dist, generator);
 
     std::cout << "After:" << std::endl;
-    std::cout << std::setprecision(4) << Aints << std::endl;
+    std::cout << std::setprecision(4) << latticeMatrix << std::endl;
 	
-	performOneMonteCarloCycle(Aints, L, beta, uniform_dist, generator);
+	performOneMonteCarloCycle(latticeMatrix, L, beta, uniform_dist, generator);
 
     std::cout << "After:" << std::endl;
-    std::cout << std::setprecision(4) << Aints << std::endl;
+    std::cout << std::setprecision(4) << latticeMatrix << std::endl;
 	
-	performOneMonteCarloCycle(Aints, L, beta, uniform_dist, generator);
+	performOneMonteCarloCycle(latticeMatrix, L, beta, uniform_dist, generator);
 
     std::cout << "After:" << std::endl;
-    std::cout << std::setprecision(4) << Aints << std::endl;
+    std::cout << std::setprecision(4) << latticeMatrix << std::endl;
 	
     return 0;
 }
