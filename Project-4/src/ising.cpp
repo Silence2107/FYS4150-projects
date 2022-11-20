@@ -13,6 +13,7 @@
 #include "../include/ising.h"
 
 // We make the namespaces implicit now - benefit of short notation outweights risk for confusion/clashes.
+//In h-file we use the full namespace though, in order to not force every cpp-file to do this. 
 using namespace std;
 using namespace arma;
 
@@ -117,12 +118,12 @@ void performOneMonteCarloUpdate(imat &A, size_t L, double beta, uniform_real_dis
 	// cout << "Energy difference: " << energyDifference << " accept: " << (accept>0?"yes":"no") << endl;
 }
 
-/*** Calculates energy averaged per site.
+/*** Calculates total energy.
  *   The energy is returned in units of coupling constant J.
  */
-double calculateAverageEnergy(imat &A, size_t L)
+double calculateTotalEnergy(imat &A, size_t L)
 {
-	long totalEnergy = 0; // We do not need double until the division in the last step.
+	long totalEnergy = 0; // We do not need double until the last step.
 
 	// First we need the total energy of the system, calculated as sum of interaction energy of all sites.
 	// Loop over every single site in lattice and sum up energy due to interaction with neighbors.
@@ -139,12 +140,15 @@ double calculateAverageEnergy(imat &A, size_t L)
 			totalEnergy += -thisSpin * (spinRight + spinBelow);
 		}
 	}
-	return ((double)totalEnergy) / (L * L); // Divide with number of sites to get average.
+	return (double)totalEnergy; 
 }
 
-double calculateAverageMagnetization(imat &A, size_t L)
+/*** Calculates total magnetization.
+ *   The unit is just the same dimensionless unit as spins.
+ */
+double calculateTotalAbsoluteMagnetization(imat &A, size_t L)
 {
-	long totalSpin = 0; // We do not need double until the division in the last step.
+	long totalSpin = 0; // We do not need double until the last step.
 
 	// First we need the total energy of the system, calculated as sum of interaction energy of all sites.
 	// Loop over every single site in lattice and sum up energy due to interaction with neighbors.
@@ -155,5 +159,5 @@ double calculateAverageMagnetization(imat &A, size_t L)
 			totalSpin += A(i, j);
 		}
 	}
-	return fabs(((double)totalSpin) / (L * L)); // Divide with number of sites to get average.
+	return fabs(((double)totalSpin)); 
 }
