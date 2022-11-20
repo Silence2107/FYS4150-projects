@@ -98,8 +98,8 @@ int main(int argc, char **argv)
 	double energyPerSite = averageE / N;
 	double magnetizationPerSite = averageM / N;
 
-	double specificHeatPerSite = (averageE2 - averageE * averageE) / (T * T * N);
-	double magneticSusceptibilityPerSite = (averageM2 - averageM * averageM) / (T * N);
+	double specificHeatPerSite = (averageE2 - averageE * averageE) / (T * T * N * N);
+	double magneticSusceptibilityPerSite = (averageM2 - averageM * averageM) / (T * N * N);
 
 	if (L < 10)
 	{
