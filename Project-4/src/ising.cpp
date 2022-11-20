@@ -72,10 +72,11 @@ void performOneMonteCarloUpdate(imat &A, size_t L, double beta, uniform_real_dis
 	// the changed spin makes this correct in this case. If we instead had looped over all lattices we would have only compared right and down instead.
 	// Side note: for the special case 2*2 lattice this still leads to double counting in principle, but we keep the algorithm equivalent regardless,
 	// as this also makes most sense for the comparasion with analytical results.
-	int spinAbove = A((randomRow - 1) % L, randomCol); // Modulus operator % makes the period boundary condition work, both ways.
-	int spinBelow = A((randomRow + 1) % L, randomCol);
-	int spinLeft = A(randomRow, (randomCol - 1) % L);
-	int spinRight = A(randomRow, (randomCol + 1) % L);
+	// Modulus operator % makes the period boundary condition work. To make it work both ways +L is needed because how modulus treat negative numbers.
+	int spinAbove = A((randomRow - 1 + L) % L, randomCol); 
+	int spinBelow = A((randomRow + 1 + L) % L, randomCol);
+	int spinLeft = A(randomRow, (randomCol - 1 + L) % L);
+	int spinRight = A(randomRow, (randomCol + 1 + L) % L);
 	int sumOfNeightborSpins = spinLeft + spinRight + spinAbove + spinBelow;
 	// Recall that total energy is the sum of all products -J*Sk*Sl with J coupling contant and Sk,Sl neighbors.
 	// For local energy change, only take the sum of all products of flipped spin with it's 4 neighbor spins.
