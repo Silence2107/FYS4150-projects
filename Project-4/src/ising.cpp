@@ -49,12 +49,34 @@ imat initOrderedSpinMatrix(size_t L)
 	return imat(L, L).ones(); // Armadillo matrix of signed integers since we only store spins -1 and 1.
 }
 
+/*** Precompute exp(-beta*deltaE) for the only 5 possible values of deltaE, and for a given T.
+ */
+vector<double> precomputeExpBeta(double T){
+	double beta = 1.0/T; 
+	vector<double> precomputedExpBeta(5);
+	precomputedExpBeta[0] = exp(-beta * -8);
+	precomputedExpBeta[1] = exp(-beta * 4);
+	precomputedExpBeta[2] = exp(-beta * 0);
+	precomputedExpBeta[3] = exp(-beta * 4);
+	precomputedExpBeta[4] = exp(-beta * 8);
+	return precomputedExpBeta;
+}
+
+/*** Fetch precomputed exp(-beta*deltaE) by a fancy smart lookup in previous table.
+ *   Method inline for optimization. Not in h-file because only meant to be called from this file. 
+ *   Grouped together here with precomputeExpBeta above, so we should remember to update code in both if we update either. 
+ */
+inline double getPrecomputedExpBeta(vector<double>precomputedExpBeta, int deltaE){
+	//Index calculation turns -8 into index 0, -4 into index 1 etc. Oppositive to how assigned in precomputeExpBeta.
+	return precomputedExpBeta[2+deltaE/4];
+}
+
 /*** Perform one Monte Carlo update using The Metropolis Algorithm.
  *   One spin site as chosen at random, and then another random check is made to decide if spin should flip, taking Boltzmann statistics into account.
  *   Logic taken from section 12.5 of Morten's lecture notes.
  *   Nomenclature clarification: As this is a single lattice update attempt, one "Monte Carlo cycle" requires N calls to this method.
  */
-void performOneMonteCarloUpdate(imat &A, size_t L, double beta, uniform_real_distribution<double> &uniform_dist, mt19937 &generator)
+void performOneMonteCarloUpdate(imat &A, size_t L, double beta, uniform_real_distribution<double> &uniform_dist, mt19937 &generator, vector<double>& precomputedExpBeta)
 {
 
 	// Step 1. Generate a candidate state S'
@@ -100,9 +122,17 @@ void performOneMonteCarloUpdate(imat &A, size_t L, double beta, uniform_real_dis
 		// This should make the result converge to a Boltzmann distribution, and also ensure ergodicity because there is a small probability to
 		// increase even to the highest allowed but unlikely states.
 		double r = uniform_dist(generator);
-		double probabilityRatio = exp(-beta * energyDifference);
-		// TODO: As suggested in problem 2b, avoid repeatedly calling exp() by calculating the only 5 possible values beforehand, and store in some table.
-		// cout << "Comparing probability ratio " << probabilityRatio << " to random number " << r << endl;
+		double probabilityRatio = 0.0;
+		//As suggested in problem 2b, avoid repeatedly calling exp() by calculating the only 5 possible values beforehand.
+		if(precomputedExpBeta.size()>0)   //Check if precomputed values are available, otherwise we need to compute now. 
+		{
+			probabilityRatio = getPrecomputedExpBeta(precomputedExpBeta, energyDifference);
+		}
+		else
+		{
+			//TODO: might be possible to delete this case eventually. 
+			probabilityRatio = exp(-beta * energyDifference);
+		}
 		if (probabilityRatio > r)
 		{
 			accept = 1;
@@ -117,6 +147,16 @@ void performOneMonteCarloUpdate(imat &A, size_t L, double beta, uniform_real_dis
 
 	// cout << "Randomly updating (" << randomRow << "," <<  randomCol << ")." << endl;
 	// cout << "Energy difference: " << energyDifference << " accept: " << (accept>0?"yes":"no") << endl;
+}
+
+/*** Perform one Monte Carlo update using The Metropolis Algorithm.
+ *   One spin site as chosen at random, and then another random check is made to decide if spin should flip, taking Boltzmann statistics into account.
+ *   Logic taken from section 12.5 of Morten's lecture notes.
+ *   Nomenclature clarification: As this is a single lattice update attempt, one "Monte Carlo cycle" requires N calls to this method.
+ */
+void performOneMonteCarloUpdate(imat &A, size_t L, double beta, uniform_real_distribution<double> &uniform_dist, mt19937 &generator){
+	vector<double> emptyVector(0);
+	return performOneMonteCarloUpdate(A, L, beta, uniform_dist, generator, emptyVector);
 }
 
 /*** Calculates total energy.
