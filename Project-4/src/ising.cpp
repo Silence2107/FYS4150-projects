@@ -71,6 +71,42 @@ inline double getPrecomputedExpBeta(vector<double>precomputedExpBeta, int deltaE
 	return precomputedExpBeta[2+deltaE/4];
 }
 
+/*** Helper function to performOneMonteCarloUpdate. 
+ *   Separates the logic of acceptance to it's own function. Not intended to be called from other files. 
+ * */
+bool metropolisAcceptRejectDecision(double energyDifference, double beta, uniform_real_distribution<double> &uniform_dist, mt19937 &generator, vector<double>& precomputedExpBeta)
+{
+	int accept = 0; // Default to reject and see if we find reason to accept.
+	if (energyDifference <= 0.0)
+	{
+		// From page 404 in Mortens lecture notes we get a more efficient algorithm by immediately accepting all changes to lower energy state.
+		accept = 1;
+	}
+	else
+	{
+		// For flip to higher energy, use the other formula from page 404 in Mortens lecture notes.
+		// This should make the result converge to a Boltzmann distribution, and also ensure ergodicity because there is a small probability to
+		// increase even to the highest allowed but unlikely states.
+		double r = uniform_dist(generator);
+		double probabilityRatio = 0.0;
+		//As suggested in problem 2b, avoid repeatedly calling exp() by calculating the only 5 possible values beforehand.
+		if(precomputedExpBeta.size()>0)   //Check if precomputed values are available, otherwise we need to compute now. 
+		{
+			probabilityRatio = getPrecomputedExpBeta(precomputedExpBeta, energyDifference);
+		}
+		else
+		{
+			//TODO: might be possible to delete this case eventually. 
+			probabilityRatio = exp(-beta * energyDifference);
+		}
+		if (probabilityRatio > r)
+		{
+			accept = 1;
+		}
+	}
+	return accept;
+}
+
 /*** Perform one Monte Carlo update using The Metropolis Algorithm.
  *   One spin site as chosen at random, and then another random check is made to decide if spin should flip, taking Boltzmann statistics into account.
  *   Logic taken from section 12.5 of Morten's lecture notes.
@@ -110,34 +146,7 @@ void performOneMonteCarloUpdate(imat &A, size_t L, double beta, uniform_real_dis
 	// just exp(-beta*energyDifference). But we wait a few lines calculating this since it's not certain we even need this.
 
 	// Step 3. Generate r ~ U(0,1) and carry out accept/reject steps.
-	int accept = 0; // First decide if it's an accept or a reject.
-	if (energyDifference <= 0.0)
-	{
-		// From page 404 in Mortens lecture notes we get a more efficient algorithm by immediately accepting all changes to lower energy state.
-		accept = 1;
-	}
-	else
-	{
-		// For flip to higher energy, use the other formula from page 404 in Mortens lecture notes.
-		// This should make the result converge to a Boltzmann distribution, and also ensure ergodicity because there is a small probability to
-		// increase even to the highest allowed but unlikely states.
-		double r = uniform_dist(generator);
-		double probabilityRatio = 0.0;
-		//As suggested in problem 2b, avoid repeatedly calling exp() by calculating the only 5 possible values beforehand.
-		if(precomputedExpBeta.size()>0)   //Check if precomputed values are available, otherwise we need to compute now. 
-		{
-			probabilityRatio = getPrecomputedExpBeta(precomputedExpBeta, energyDifference);
-		}
-		else
-		{
-			//TODO: might be possible to delete this case eventually. 
-			probabilityRatio = exp(-beta * energyDifference);
-		}
-		if (probabilityRatio > r)
-		{
-			accept = 1;
-		}
-	}
+	bool accept = metropolisAcceptRejectDecision(energyDifference, beta, uniform_dist, generator, precomputedExpBeta);
 	if (accept)
 	{
 		// In case of accept, update spin to the new (flipped) state.
