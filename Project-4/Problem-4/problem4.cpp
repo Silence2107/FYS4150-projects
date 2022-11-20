@@ -83,23 +83,28 @@ int main(int argc, char **argv)
 		double M = calculateTotalAbsoluteMagnetization(latticeMatrix, L);
 
 		// We could also optimize just keep the total sum, and perform addition in each loop step, but to start with it is useful to be able to plot everything.
-		everyE[i] = E;
-		everyM[i] = M;
-		everyE2[i] = E * E;
-		everyM2[i] = M * M;
+		everyE[i] = E / N;
+		everyM[i] = M / N;
+		everyE2[i] = everyE[i] * everyE[i];
+		everyM2[i] = everyM[i] * everyM[i];
 	}
 
 	// Now we can calculate avarage values of quantities and quantities squared.
-	double averageE = std::accumulate(everyE.begin(), everyE.end(), 0) / monteCarlCyclesToRun;
-	double averageM = std::accumulate(everyM.begin(), everyM.end(), 0) / monteCarlCyclesToRun;
-	double averageE2 = std::accumulate(everyE2.begin(), everyE2.end(), 0) / monteCarlCyclesToRun;
-	double averageM2 = std::accumulate(everyM2.begin(), everyM2.end(), 0) / monteCarlCyclesToRun;
+	double energyPerSite = 0,
+		   magnetizationPerSite = 0,
+		   energySqrPerSite = 0,
+		   magnetizationSqrPerSite = 0;
+	magnetizationPerSite = 0;
+	for (int i = 0; i < monteCarlCyclesToRun; i++)
+	{
+		energyPerSite += everyE[i] / monteCarlCyclesToRun;
+		magnetizationPerSite += everyM[i]/monteCarlCyclesToRun;
+		energySqrPerSite += everyE2[i]/monteCarlCyclesToRun;
+		magnetizationSqrPerSite += everyM2[i]/monteCarlCyclesToRun;
+	}
 
-	double energyPerSite = averageE / N;
-	double magnetizationPerSite = averageM / N;
-
-	double specificHeatPerSite = (averageE2 - averageE * averageE) / (T * T * N * N);
-	double magneticSusceptibilityPerSite = (averageM2 - averageM * averageM) / (T * N * N);
+	double specificHeatPerSite = (energySqrPerSite - energyPerSite * energyPerSite) / (T * T);
+	double magneticSusceptibilityPerSite = (magnetizationSqrPerSite - magnetizationPerSite * magnetizationPerSite) / T;
 
 	if (L < 10)
 	{
@@ -107,7 +112,7 @@ int main(int argc, char **argv)
 		cout << setprecision(4) << latticeMatrix << endl;
 	}
 
-	//TODO: For 4b we should store all vectors to a file, and make a Python script to plot it.
+	// TODO: For 4b we should store all vectors to a file, and make a Python script to plot it.
 
 	cout << "All states Average energy (per spin site): " << energyPerSite << endl;
 	cout << "Last state Average energy (per spin site): " << calculateTotalEnergy(latticeMatrix, L) / (L * L) << endl;
