@@ -51,20 +51,45 @@ int main(int argc, char **argv)
 	//Setting a random starting matrix. The other alternative is initOrderedSpinMatrix, that will be useful for problem 5b.
 	imat latticeMatrix = initUnorderedSpinMatrix(L, uniform_dist, generator);
 
+	//Show the Matrix in stdout, only if small enough to easily fit screen.
 	if (L < 10)
 	{
 		cout << "Before:" << endl;
 		cout << setprecision(4) << latticeMatrix << endl;
 	}
+
+	//Set up vectors to store physical quantities for each Monte Carlo cycle. 
+	std::vector<double> everyE(monteCarlCyclesToRun);
+	std::vector<double> everyE2(monteCarlCyclesToRun);
+	std::vector<double> everyM(monteCarlCyclesToRun);
+	std::vector<double> everyM2(monteCarlCyclesToRun);
+
 	for (int i = 0; i < monteCarlCyclesToRun; i++)
 	{
 		for (int j = 0; j < N; j++)
 		{
-			// Each Monte Carlo "cycle" is N attempted updates.
+			// Each Monte Carlo "cycle" is N attempted updates (also called Monte Carl samplings).
 			// Note that N is the number of sites, but it does not mean we attempt every site. The randomness might attempt the same site
 			// multiple times but this is what we want, as it avoids unwanted correlation between transitions.
 			performOneMonteCarloUpdate(latticeMatrix, L, beta, uniform_dist, generator);
 		}
+
+		//Every Monto Carl cycle produces one sample. We calculate the avarage and variance of energy and magnetization 
+		//by storing the value of E, E^2, M and M^2 here, for each loop step, i a vector.
+		//TODO: Make sure this is the correct approach. I'm alittle unsure of avarage is to be taken over these samples, or if we should
+		//have taken avarage over every single N update inside function performOneMonteCarloUpdate. 
+
+		double E = calculateTotalEnergy(latticeMatrix, L);
+		double M = calculateTotalAbsoluteMagnetization(latticeMatrix, L);
+
+		//We could also optimize just keep the total sum, and perform addition in each loop step, but to start with it is useful to be able to plot everything.
+		everyE[i] = E;
+		everyM[i] = M;
+		everyE2[i] = E*E;
+		everyM2[i] = M*M;
+
+	
+		//make an addition sum them and store only 
 		/*if ((i + 1) % 10 == 0)
 		{
 			cout << (i + 1) << " iterations run" << endl;
@@ -81,8 +106,8 @@ int main(int argc, char **argv)
 		cout << setprecision(4) << latticeMatrix << endl;
 	}
 
-	cout << "Average energy: " << calculateAverageEnergy(latticeMatrix, L) << endl;
-	cout << "Average magnetization: " << calculateAverageMagnetization(latticeMatrix, L) << endl;
+	cout << "Average energy: " << calculateTotalEnergy(latticeMatrix, L)/(L*L) << endl;
+	cout << "Average magnetization: " << calculateTotalAbsoluteMagnetization(latticeMatrix, L)/(L*L) << endl;
 
 	return 0;
 }

@@ -26,8 +26,17 @@ void performOneMonteCarloUpdate(arma::imat& A, size_t L, double beta, std::unifo
 /*** Calculates energy averaged per site.
  *   The energy is returned in units of coupling constant J. 
  */
-double calculateAverageEnergy(arma::imat& A, size_t L);
+//double calculateAverageEnergy(arma::imat& A, size_t L);
+//double calculateAverageMagnetization(arma::imat& A, size_t L);
 
-double calculateAverageMagnetization(arma::imat& A, size_t L);
+/*** Calculates total energy.
+ *   The energy is returned in units of coupling constant J.
+ */
+double calculateTotalEnergy(arma::imat &A, size_t L);
+
+/*** Calculates total magnetization.
+ *   The unit is just the same dimensionless unit as spins.
+ */
+double calculateTotalAbsoluteMagnetization(arma::imat &A, size_t L);
 
 #endif
