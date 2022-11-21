@@ -7,6 +7,7 @@
 #include <chrono>
 
 // for writing to file
+#include "../include/file_io.h"
 #include <string>
 #include <fstream>
 
