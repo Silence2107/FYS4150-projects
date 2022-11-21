@@ -106,13 +106,14 @@ int main(int argc, char **argv)
 		cout << setprecision(4) << latticeMatrix << endl;
 	}
 
-	// TODO: For 4b we should store all vectors to a file, and make a Python script to plot it.
+	//Increasing precision again before printing interesting quantities. Otherwise too few decimals to compare with analytical result.
+	cout << setprecision(8);
 
 	cout << "All states Average energy (per spin site): " << energyPerSite << endl;
-	cout << "Last state Average energy (per spin site): " << calculateTotalEnergy(latticeMatrix, L) / (L * L) << endl;
+	//cout << "Last state Average energy (per spin site): " << calculateTotalEnergy(latticeMatrix, L) / (L * L) << endl;
 
 	cout << "All states Average magnetization (per spin site): " << magnetizationPerSite << endl;
-	cout << "Last state Average magnetization (per spin site): " << calculateTotalAbsoluteMagnetization(latticeMatrix, L) / (L * L) << endl;
+	//cout << "Last state Average magnetization (per spin site): " << calculateTotalAbsoluteMagnetization(latticeMatrix, L) / (L * L) << endl;
 
 	cout << "Specific heat capacity (per spin site): " << specificHeatPerSite << endl;
 	cout << "Susceptibility (per spin site): " << magneticSusceptibilityPerSite << endl;
