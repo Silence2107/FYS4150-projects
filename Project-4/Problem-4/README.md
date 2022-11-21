@@ -2,7 +2,7 @@
 Implement Ising model with Monte Carlo.
 
 ## Usage
-- Compile the code with `g++ problem4.cpp -o problem4.exe ../src/* -I../include/ -std=c++11 -larmadillo`
+- Compile the code with `g++ -O3 problem4.cpp -o problem4.exe ../src/* -I../include/ -std=c++11 -larmadillo`
 - Run the code with `./problem4.exe <L width of lattice> <T temperature in J/Kb> <Number MC cycles>`
 
 Examples on command lines 
