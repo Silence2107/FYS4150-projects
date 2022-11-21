@@ -90,31 +90,15 @@ int main(int argc, char **argv)
 	}
 
 	// Now we can calculate avarage values of quantities and quantities squared.
-<<<<<<< HEAD
-	double energyPerSite = 0,
-		   magnetizationPerSite = 0,
-		   energySqrPerSite = 0,
-		   magnetizationSqrPerSite = 0;
-	magnetizationPerSite = 0;
-	for (int i = 0; i < monteCarlCyclesToRun; i++)
-	{
-		energyPerSite += everyE[i] / monteCarlCyclesToRun;
-		magnetizationPerSite += everyM[i]/monteCarlCyclesToRun;
-		energySqrPerSite += everyE2[i]/monteCarlCyclesToRun;
-		magnetizationSqrPerSite += everyM2[i]/monteCarlCyclesToRun;
-	}
-=======
 	double averageE = std::accumulate(everyE.begin(), everyE.end(), 0.0) / monteCarlCyclesToRun;
 	double averageM = std::accumulate(everyM.begin(), everyM.end(), 0.0) / monteCarlCyclesToRun;
 	double averageE2 = std::accumulate(everyE2.begin(), everyE2.end(), 0.0) / monteCarlCyclesToRun;
 	double averageM2 = std::accumulate(everyM2.begin(), everyM2.end(), 0.0) / monteCarlCyclesToRun;
 
-	double energyPerSite = averageE / N;
-	double magnetizationPerSite = averageM / N;
->>>>>>> origin/main
-
-	double specificHeatPerSite = (energySqrPerSite - energyPerSite * energyPerSite) / (T * T);
-	double magneticSusceptibilityPerSite = (magnetizationSqrPerSite - magnetizationPerSite * magnetizationPerSite) / T;
+	double energyPerSite = averageE;
+	double specificHeatPerSite = (averageE2 - averageE * averageE) / (T * T);
+	double magnetizationPerSite = averageM;
+	double magneticSusceptibilityPerSite = (averageM2 - averageM * averageM) / T;
 
 	if (L < 10)
 	{
