@@ -90,10 +90,10 @@ int main(int argc, char **argv)
 	}
 
 	// Now we can calculate avarage values of quantities and quantities squared.
-	double averageE = std::accumulate(everyE.begin(), everyE.end(), 0) / monteCarlCyclesToRun;
-	double averageM = std::accumulate(everyM.begin(), everyM.end(), 0) / monteCarlCyclesToRun;
-	double averageE2 = std::accumulate(everyE2.begin(), everyE2.end(), 0) / monteCarlCyclesToRun;
-	double averageM2 = std::accumulate(everyM2.begin(), everyM2.end(), 0) / monteCarlCyclesToRun;
+	double averageE = std::accumulate(everyE.begin(), everyE.end(), 0.0) / monteCarlCyclesToRun;
+	double averageM = std::accumulate(everyM.begin(), everyM.end(), 0.0) / monteCarlCyclesToRun;
+	double averageE2 = std::accumulate(everyE2.begin(), everyE2.end(), 0.0) / monteCarlCyclesToRun;
+	double averageM2 = std::accumulate(everyM2.begin(), everyM2.end(), 0.0) / monteCarlCyclesToRun;
 
 	double energyPerSite = averageE / N;
 	double magnetizationPerSite = averageM / N;
