@@ -53,6 +53,14 @@ int main(int argc, char **argv)
 	// Member variables that hold a <random> generator
 	// and distribution (uniform distribution [0,1)).
 
+
+
+	//vector to store temperature values
+	int numTempSteps = 20;
+	std::vector<double> T_values(numTempSteps);
+	std::vector<double> quantity(numTempSteps);
+
+
 #pragma omp parallel // Start parallel region
 	{
 		// Which thread is this?
@@ -67,14 +75,10 @@ int main(int argc, char **argv)
 		unsigned int my_seed = base_seed + thread_id;
 		generator.seed(my_seed);
 
-		int numTempSteps = 11;
 		double tempStep = 0.1;
-		double startTemp = 1.5;
+		double startTemp = 1.0;
 
 
-//vector to store temperature values
-std::vector<double> T_values(numTempSteps);
-std::vector<double> test_values(numTempSteps);
 
 
 #pragma omp for
@@ -85,12 +89,7 @@ std::vector<double> test_values(numTempSteps);
 			// Looping over integers because that works better with OpenMP and then turn integers into double type temperature.
 			double T = startTemp + t * tempStep;
 
-
-			//store each T value
 			T_values[t] = T;
-
-
-
 
 			double beta = 1.0 / T; // The standard beta of statistical physics 1/TKb but with the units chosen in this program Kb is already counted in.
 
@@ -136,9 +135,6 @@ std::vector<double> test_values(numTempSteps);
 			double averageE2 = std::accumulate(everyE2.begin(), everyE2.end(), 0.0) / monteCarlCyclesToRun;
 			double averageM2 = std::accumulate(everyM2.begin(), everyM2.end(), 0.0) / monteCarlCyclesToRun;
 
-			test_values[t] = averageE;
-
-
 			double energyPerSite = averageE / N;
 			double magnetizationPerSite = averageM / N;
 
@@ -146,10 +142,15 @@ std::vector<double> test_values(numTempSteps);
 			double magneticSusceptibilityPerSite = (averageM2 - averageM * averageM) / (T * N * N);
 
 
+			quantity[t] = specificHeatPerSite;
+
+
 #pragma omp critical // <-- Code in a "ciritical block" is only run one thread at a time. Avoids garbled screen output.
 			{
 				cout << "=====================================================================" << endl;
 				cout << "For temperature T=" << T << endl;
+
+
 				cout << "All states Average energy (per spin site): " << energyPerSite << endl;
 
 				cout << "All states Average magnetization (per spin site): " << magnetizationPerSite << endl;
@@ -158,13 +159,10 @@ std::vector<double> test_values(numTempSteps);
 				cout << "Susceptibility (per spin site): " << magneticSusceptibilityPerSite << endl;
 
 
-				std::cout << test_values[t] << std::endl;
+				std::cout << quantity[t] << std::endl;
+				std::cout << T_values[t] << std::endl;
 
 			}
-
-
-			//print to output file
-			//two_columns_to_csv("test.csv", T_values,  test_values , ",", false, 7);
 
 
 
@@ -179,10 +177,12 @@ std::vector<double> test_values(numTempSteps);
 
 
 
+
 	} // End entire parallel region
 
 
 
+	two_columns_to_csv("test.csv", T_values,  quantity , ",", false, 7);
 
 
 
