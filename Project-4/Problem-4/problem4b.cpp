@@ -29,15 +29,19 @@ int main(int argc, char **argv)
 	double Z = 4.0*cosh(8.0*beta) + 12.0;  //Partition function analytical
 	double energyPerSiteAnalytical = -8.0*sinh(8.0*beta) / Z;
 	double magnetismPerSiteAnalytical = (2.0*exp(8.0*beta)+4.0) / Z; 
-	double specificHeatPerSiteAnalytical = 64.0/(T*T) * (12.0*cosh(8.0*beta)+4) / (Z*Z); 
-	double magneticSusceptibilityPerSiteAnalytical = 8.0*beta/(Z*Z) * (6.0*exp(8.0*beta)+2.0*exp(-8*beta)+6);
+	double specificHeatAnalytical = 64.0/(T*T) * (12.0*cosh(8.0*beta)+4) / (Z*Z); 
+	double magneticSusceptibilityAnalytical = 8.0*beta/(Z*Z) * (6.0*exp(8.0*beta)+2.0*exp(-8*beta)+6);
 
 	cout << "Analytic calculation for T=" << T << endl;
 	cout << "Average energy (per spin site): " << energyPerSiteAnalytical << endl;
 	cout << "Average magnetization (per spin site): " << magnetismPerSiteAnalytical << endl;
-	
-	cout << "Specific heat capacity (per spin site): " << specificHeatPerSiteAnalytical << endl;
-	cout << "Susceptibility (per spin site): " << magneticSusceptibilityPerSiteAnalytical << endl; 
+	cout << "Specific heat capacity: " << specificHeatAnalytical << endl;
+	cout << "Susceptibility: " << magneticSusceptibilityAnalytical << endl; 
+
+	int N=4;  //As we are on special case 2*2
+
+	cout << "Specific heat capacity (per spin site): " << specificHeatAnalytical/N << endl;
+	cout << "Susceptibility (per spin site): " << magneticSusceptibilityAnalytical/N << endl; 
 
 	return 0;
 }
