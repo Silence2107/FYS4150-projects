@@ -18,7 +18,7 @@ using namespace arma;
 
 int main(int argc, char **argv)
 {
-
+	// Yes I'm doubling the code here, but I need non-humanic output
 	if (argc > 4)
 	{
 		throw std::invalid_argument("Usage: ./ising.exe <L width of lattice> <T temperature in J/Kb> <Number MC cycles>");
@@ -102,20 +102,20 @@ int main(int argc, char **argv)
 
 	if (L < 10)
 	{
-		cout << "After:" << endl;
-		cout << setprecision(4) << latticeMatrix << endl;
+		//cout << "After:" << endl;
+		//cout << setprecision(4) << latticeMatrix << endl;
 	}
 
-	// TODO: For 4b we should store all vectors to a file, and make a Python script to plot it.
+	//TODO: For 4b we should store all vectors to a file, and make a Python script to plot it.
 
-	cout << "All states Average energy (per spin site): " << energyPerSite << endl;
-	cout << "Last state Average energy (per spin site): " << calculateTotalEnergy(latticeMatrix, L) / (L * L) << endl;
+	cout << energyPerSite << " ";
+	//cout << "Last state Average energy (per spin site): " << calculateTotalEnergy(latticeMatrix, L) / (L * L) << endl;
 
-	cout << "All states Average magnetization (per spin site): " << magnetizationPerSite << endl;
-	cout << "Last state Average magnetization (per spin site): " << calculateTotalAbsoluteMagnetization(latticeMatrix, L) / (L * L) << endl;
+	cout << magnetizationPerSite << " ";
+	//cout << "Last state Average magnetization (per spin site): " << calculateTotalAbsoluteMagnetization(latticeMatrix, L) / (L * L) << endl;
 
-	cout << "Specific heat capacity (per spin site): " << specificHeatPerSite << endl;
-	cout << "Susceptibility (per spin site): " << magneticSusceptibilityPerSite << endl;
+	cout << specificHeatPerSite << " ";
+	cout << magneticSusceptibilityPerSite << "\n";
 
 	return 0;
 }
