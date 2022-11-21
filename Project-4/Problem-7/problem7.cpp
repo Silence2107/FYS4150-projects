@@ -37,7 +37,9 @@ int main(int argc, char **argv)
 
 	size_t N = L * L; // Total number of sites in lattice.
 
-	int burnInNumber = 0;  //How many Monte Carlo cylces to run before actually start recording samples.
+	//How many Monte Carlo cylces to run before actually start recording samples.
+	//1000 was found experimentally to be a good value from problem 5, as the plot converged both for ordered and unordered systems.
+	int burnInNumber = 1000;  
 
 	// Random number setup in the way recommended for parallell computing, at https://github.com/anderkve/FYS3150/blob/master/code_examples/random_number_generation/main_rng_in_class_omp.cpp
 	//  Use the system clock to get a base seed
