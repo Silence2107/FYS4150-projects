@@ -6,4 +6,4 @@ Running parallellized code for many temperatures.
 - Run the code with `./problem7.exe <L width of lattice> <Number MC cycles>`
 
 Examples on command lines 
-`./problem4.exe 20 200`
+`./problem7.exe 20 10000`
