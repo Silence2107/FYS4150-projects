@@ -1,5 +1,5 @@
-#ifndef FILE_IO_H
-#define FILE_IO_H
+#ifndef ISING_H
+#define ISING_H
 
 #include <iostream>
 #include <armadillo>
