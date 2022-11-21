@@ -7,13 +7,20 @@
 #include <chrono>
 
 // for writing to file
+
+
+//----------------------------------THIS GIVES THE ERRORS
 #include "../include/file_io.h"
+//_____________________________________________________
+
+
 #include <string>
 #include <fstream>
 
 #include "omp.h" // OpenMP header
 
 #include "../include/ising.h"
+#include "../include/file_io.h"
 
 // We make the namespaces implicit now - benefit of short notation outweights risk for confusion/clashes.
 using namespace std;
@@ -63,6 +70,13 @@ int main(int argc, char **argv)
 		int numTempSteps = 11;
 		double tempStep = 0.1;
 		double startTemp = 1.5;
+
+
+//vector to store temperature values
+std::vector<double> T_values(numTempSteps);
+std::vector<double> test_values(numTempSteps);
+
+
 #pragma omp for
 		// for(double T=1.0; T<=4; T+=0.1)
 		for (int t = 0; t < numTempSteps; ++t)
@@ -70,6 +84,13 @@ int main(int argc, char **argv)
 		{
 			// Looping over integers because that works better with OpenMP and then turn integers into double type temperature.
 			double T = startTemp + t * tempStep;
+
+
+			//store each T value
+			T_values[t] = T;
+
+
+
 
 			double beta = 1.0 / T; // The standard beta of statistical physics 1/TKb but with the units chosen in this program Kb is already counted in.
 
@@ -115,11 +136,15 @@ int main(int argc, char **argv)
 			double averageE2 = std::accumulate(everyE2.begin(), everyE2.end(), 0.0) / monteCarlCyclesToRun;
 			double averageM2 = std::accumulate(everyM2.begin(), everyM2.end(), 0.0) / monteCarlCyclesToRun;
 
+			test_values[t] = averageE;
+
+
 			double energyPerSite = averageE / N;
 			double magnetizationPerSite = averageM / N;
 
 			double specificHeatPerSite = (averageE2 - averageE * averageE) / (T * T * N * N);
 			double magneticSusceptibilityPerSite = (averageM2 - averageM * averageM) / (T * N * N);
+
 
 #pragma omp critical // <-- Code in a "ciritical block" is only run one thread at a time. Avoids garbled screen output.
 			{
@@ -131,10 +156,38 @@ int main(int argc, char **argv)
 
 				cout << "Specific heat capacity (per spin site): " << specificHeatPerSite << endl;
 				cout << "Susceptibility (per spin site): " << magneticSusceptibilityPerSite << endl;
+
+
+				std::cout << test_values[t] << std::endl;
+
 			}
+
+
+			//print to output file
+			//two_columns_to_csv("test.csv", T_values,  test_values , ",", false, 7);
+
+
+
+
+
+
 		} // End parallelized loop over T
 
+
+
+
+
+
+
 	} // End entire parallel region
+
+
+
+
+
+
+
+
 
 	return 0;
 }
