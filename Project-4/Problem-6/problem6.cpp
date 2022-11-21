@@ -54,8 +54,8 @@ int main(int argc, char **argv)
 	// Show the Matrix in stdout, only if small enough to easily fit screen.
 	if (L < 10)
 	{
-		//cout << "Before:" << endl;
-		//cout << setprecision(4) << latticeMatrix << endl;
+		cout << "Before:" << endl;
+		cout << setprecision(4) << latticeMatrix << endl;
 	}
 
 	// Set up vectors to store physical quantities for each Monte Carlo cycle.
@@ -83,23 +83,22 @@ int main(int argc, char **argv)
 		double M = calculateTotalAbsoluteMagnetization(latticeMatrix, L);
 
 		// We could also optimize just keep the total sum, and perform addition in each loop step, but to start with it is useful to be able to plot everything.
-		everyE[i] = E;
-		everyM[i] = M;
-		everyE2[i] = E * E;
-		everyM2[i] = M * M;
+		everyE[i] = E / N;
+		everyM[i] = M / N;
+		everyE2[i] = everyE[i] * everyE[i];
+		everyM2[i] = everyM[i] * everyM[i];
 	}
 
 	// Now we can calculate avarage values of quantities and quantities squared.
-	double averageE = std::accumulate(everyE.begin(), everyE.end(), 0) / monteCarlCyclesToRun;
-	double averageM = std::accumulate(everyM.begin(), everyM.end(), 0) / monteCarlCyclesToRun;
-	double averageE2 = std::accumulate(everyE2.begin(), everyE2.end(), 0) / monteCarlCyclesToRun;
-	double averageM2 = std::accumulate(everyM2.begin(), everyM2.end(), 0) / monteCarlCyclesToRun;
+	double averageE = std::accumulate(everyE.begin(), everyE.end(), 0.0) / monteCarlCyclesToRun;
+	double averageM = std::accumulate(everyM.begin(), everyM.end(), 0.0) / monteCarlCyclesToRun;
+	double averageE2 = std::accumulate(everyE2.begin(), everyE2.end(), 0.0) / monteCarlCyclesToRun;
+	double averageM2 = std::accumulate(everyM2.begin(), everyM2.end(), 0.0) / monteCarlCyclesToRun;
 
-	double energyPerSite = averageE / N;
-	double magnetizationPerSite = averageM / N;
-
-	double specificHeatPerSite = (averageE2 - averageE * averageE) / (T * T * N * N);
-	double magneticSusceptibilityPerSite = (averageM2 - averageM * averageM) / (T * N * N);
+	double energyPerSite = averageE;
+	double specificHeatPerSite = (averageE2 - averageE * averageE) / (T * T);
+	double magnetizationPerSite = averageM;
+	double magneticSusceptibilityPerSite = (averageM2 - averageM * averageM) / T;
 
 	if (L < 10)
 	{
