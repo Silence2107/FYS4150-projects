@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 
 
 	//vector to store temperature values
-	int numTempSteps = 20;
+	int numTempSteps = 15;
 	std::vector<double> T_values(numTempSteps);
 	std::vector<double> quantity(numTempSteps);
 
@@ -75,8 +75,8 @@ int main(int argc, char **argv)
 		unsigned int my_seed = base_seed + thread_id;
 		generator.seed(my_seed);
 
-		double tempStep = 0.1;
-		double startTemp = 1.0;
+		double tempStep = 0.01;
+		double startTemp = 2.2;
 
 
 
@@ -123,10 +123,10 @@ int main(int argc, char **argv)
 				double M = calculateTotalAbsoluteMagnetization(latticeMatrix, L);
 
 				// We could also optimize just keep the total sum, and perform addition in each loop step, but to start with it is useful to be able to plot everything.
-				everyE[i] = E;
-				everyM[i] = M;
-				everyE2[i] = E * E;
-				everyM2[i] = M * M;
+				everyE[i] = E / N;
+				everyM[i] = M / N;
+				everyE2[i] = E * E / (N * N);
+				everyM2[i] = M * M / (N * N);
 			}
 
 			// Now we can calculate avarage values of quantities and quantities squared.
@@ -135,11 +135,11 @@ int main(int argc, char **argv)
 			double averageE2 = std::accumulate(everyE2.begin(), everyE2.end(), 0.0) / monteCarlCyclesToRun;
 			double averageM2 = std::accumulate(everyM2.begin(), everyM2.end(), 0.0) / monteCarlCyclesToRun;
 
-			double energyPerSite = averageE / N;
-			double magnetizationPerSite = averageM / N;
+			double energyPerSite = averageE;
+			double magnetizationPerSite = averageM;
 
-			double specificHeatPerSite = (averageE2 - averageE * averageE) / (T * T * N * N);
-			double magneticSusceptibilityPerSite = (averageM2 - averageM * averageM) / (T * N * N);
+			double specificHeatPerSite = N * (averageE2 - averageE * averageE) / (T * T);
+			double magneticSusceptibilityPerSite = N * (averageM2 - averageM * averageM) / (T);
 
 
 			quantity[t] = specificHeatPerSite;
