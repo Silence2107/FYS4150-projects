@@ -38,10 +38,5 @@ int main(int argc, char **argv)
 	cout << "Specific heat capacity: " << specificHeatAnalytical << endl;
 	cout << "Susceptibility: " << magneticSusceptibilityAnalytical << endl; 
 
-	int N=4;  //As we are on special case 2*2
-
-	cout << "Specific heat capacity (per spin site): " << specificHeatAnalytical/N << endl;
-	cout << "Susceptibility (per spin site): " << magneticSusceptibilityAnalytical/N << endl; 
-
 	return 0;
 }

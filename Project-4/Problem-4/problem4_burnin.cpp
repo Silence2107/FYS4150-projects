@@ -100,8 +100,8 @@ int main(int argc, char **argv)
 		// We could also optimize just keep the total sum, and perform addition in each loop step, but to start with it is useful to be able to plot everything.
 		everyE[i] = E / N;
 		everyM[i] = M / N;
-		everyE2[i] = everyE[i] * everyE[i];
-		everyM2[i] = everyM[i] * everyM[i];
+		everyE2[i] = E*E / N;
+		everyM2[i] = M*M / N;
 	}
 
 	// Now we can calculate avarage values of quantities and quantities squared.
