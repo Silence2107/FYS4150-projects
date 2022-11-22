@@ -100,8 +100,8 @@ int main(int argc, char **argv)
 		// We could also optimize just keep the total sum, and perform addition in each loop step, but to start with it is useful to be able to plot everything.
 		everyE[i] = E / N;
 		everyM[i] = M / N;
-		everyE2[i] = everyE[i] * everyE[i];
-		everyM2[i] = everyM[i] * everyM[i];
+		everyE2[i] = everyE[i]*everyE[i];
+		everyM2[i] = everyM[i]*everyM[i];
 	}
 
 	// Now we can calculate avarage values of quantities and quantities squared.
@@ -110,10 +110,13 @@ int main(int argc, char **argv)
 	double averageE2 = std::accumulate(everyE2.begin(), everyE2.end(), 0.0) / monteCarlCyclesToRun;
 	double averageM2 = std::accumulate(everyM2.begin(), everyM2.end(), 0.0) / monteCarlCyclesToRun;
 
+	//Multiplication with N is done last here, actually canceling the fact that we divided with N^2 before,
+	//(whereas the real formula has division by N) so now we get back to the correct factor of Ns.
+	//The reason is just that it seems more numerically stable in this way. 
 	double energyPerSite = averageE;
-	double specificHeatPerSite = (averageE2 - averageE * averageE) / (T * T);
+	double specificHeatPerSite = (averageE2 - averageE * averageE) / (T * T) * N;
 	double magnetizationPerSite = averageM;
-	double magneticSusceptibilityPerSite = (averageM2 - averageM * averageM) / T;
+	double magneticSusceptibilityPerSite = (averageM2 - averageM * averageM) / T * N;
 
 	if (L < 10)
 	{
