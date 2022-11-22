@@ -117,10 +117,10 @@ int main(int argc, char **argv)
 				double M = calculateTotalAbsoluteMagnetization(latticeMatrix, L);
 
 				// We could also optimize just keep the total sum, and perform addition in each loop step, but to start with it is useful to be able to plot everything.
-				everyE[i] = E;
-				everyM[i] = M;
-				everyE2[i] = E * E;
-				everyM2[i] = M * M;
+				everyE[i] = E / N;
+				everyM[i] = M / N;
+				everyE2[i] = E*E / (N*N);
+				everyM2[i] = M*M / (N*N);
 			}
 
 			// Now we can calculate avarage values of quantities and quantities squared.
@@ -129,22 +129,24 @@ int main(int argc, char **argv)
 			double averageE2 = std::accumulate(everyE2.begin(), everyE2.end(), 0.0) / monteCarlCyclesToRun;
 			double averageM2 = std::accumulate(everyM2.begin(), everyM2.end(), 0.0) / monteCarlCyclesToRun;
 
-			double energyPerSite = averageE / N;
-			double magnetizationPerSite = averageM / N;
+			double energyPerSite = averageE;
+			double magnetizationPerSite = averageM;
 
-			double specificHeatPerSite = (averageE2 - averageE * averageE) / (T * T * N * N);
-			double magneticSusceptibilityPerSite = (averageM2 - averageM * averageM) / (T * N * N);
+			//Using same strategy for getting correct value per spin as in problem 4. Experience show it makes it more numerically reliable to multiple with N last here. 
+			double specificHeatCapacity = (averageE2 - averageE * averageE) / (T * T) * N;
+			double magneticSusceptibility = (averageM2 - averageM * averageM) / (T) * N;
 
 #pragma omp critical // <-- Code in a "ciritical block" is only run one thread at a time. Avoids garbled screen output.
 			{
+				//Note, these blocks could still be written in any order to console. We only guarantee they wont be intermixed. 
 				cout << "=====================================================================" << endl;
 				cout << "For temperature T=" << T << endl;
 				cout << "All states Average energy (per spin site): " << energyPerSite << endl;
 
 				cout << "All states Average magnetization (per spin site): " << magnetizationPerSite << endl;
 
-				cout << "Specific heat capacity (per spin site): " << specificHeatPerSite << endl;
-				cout << "Susceptibility (per spin site): " << magneticSusceptibilityPerSite << endl;
+				cout << "Specific heat capacity (per spin site): " << specificHeatCapacity << endl;
+				cout << "Susceptibility (per spin site): " << magneticSusceptibility << endl;
 			}
 		} // End parallelized loop over T
 
