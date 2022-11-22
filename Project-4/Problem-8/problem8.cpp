@@ -45,7 +45,9 @@ int main(int argc, char **argv)
 
 	size_t N = L * L; // Total number of sites in lattice.
 
-	// TODO: Use later: int burnInNumber = 0;  //How many Monte Carlo cylces to run before actually start recording samples.
+	//How many Monte Carlo cylces to run before actually start recording samples.
+	//1000 was found experimentally to be a good value from problem 5, as the plot converged both for ordered and unordered systems.
+	int burnInNumber = 1000;
 
 	// Random number setup in the way recommended for parallell computing, at https://github.com/anderkve/FYS3150/blob/master/code_examples/random_number_generation/main_rng_in_class_omp.cpp
 	//  Use the system clock to get a base seed
@@ -107,6 +109,19 @@ int main(int argc, char **argv)
 
 			vector<double> precomputedExpBeta = precomputeExpBeta(T);
 
+			//Run the burn-in, by just running a set number of cycles, to get away from the randomized state.
+			for (int i = 0; i < burnInNumber; i++)
+			{
+				for (int j = 0; j < N; j++)
+				{
+					// Each Monte Carlo "cycle" is N attempted updates (also called Monte Carl samplings).
+					// Note that N is the number of sites, but it does not mean we attempt every site. The randomness might attempt the same site
+					// multiple times but this is what we want, as it avoids unwanted correlation between transitions.
+					performOneMonteCarloUpdate(latticeMatrix, L, beta, uniform_dist, generator, precomputedExpBeta);
+				}
+			}
+
+			//Now after the burn-in we run the desired number of cycles, and now actually record measurements from samples.
 			for (int i = 0; i < monteCarlCyclesToRun; i++)
 			{
 				for (int j = 0; j < N; j++)
