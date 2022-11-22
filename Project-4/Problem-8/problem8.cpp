@@ -78,8 +78,8 @@ int main(int argc, char **argv)
 		unsigned int my_seed = base_seed + thread_id;
 		generator.seed(my_seed);
 
-		double tempStep = 0.1;
-		double startTemp = 1.0;
+		double tempStep = 0.015;
+		double startTemp = 2.1;
 
 
 
@@ -182,11 +182,10 @@ int main(int argc, char **argv)
 	} // End entire parallel region
 
 
-
-	two_columns_to_csv("energy.csv", T_values,  plottingValuesEnergy , ",", false, 7);
-	two_columns_to_csv("magnetism.csv", T_values,  plottingValuesMagnetism , ",", false, 7);
-	two_columns_to_csv("specificheat.csv", T_values,  plottingValuesSpecificHeatCapacity , ",", false, 7);
-	two_columns_to_csv("susceptibility.csv", T_values,  plottingValuesMagneticSusceptibility , ",", false, 7);
+	two_columns_to_csv("energy"+to_string(L)+".csv", T_values,  plottingValuesEnergy , ",", false, 7);
+	two_columns_to_csv("magnetism"+to_string(L)+".csv", T_values,  plottingValuesMagnetism , ",", false, 7);
+	two_columns_to_csv("specificheat"+to_string(L)+".csv", T_values,  plottingValuesSpecificHeatCapacity , ",", false, 7);
+	two_columns_to_csv("susceptibility"+to_string(L)+".csv", T_values,  plottingValuesMagneticSusceptibility , ",", false, 7);
 
 
 	return 0;
