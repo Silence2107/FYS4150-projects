@@ -142,14 +142,14 @@ int main(int argc, char **argv)
 			double magnetizationPerSite = averageM;
 
 			//Using same strategy for getting correct value per spin as in problem 4. Experience show it makes it more numerically reliable to multiple with N last here. 
-			double specificHeatPerSite = (averageE2 - averageE * averageE) / (T * T) * N;
-			double magneticSusceptibilityPerSite = (averageM2 - averageM * averageM) / (T) * N;
+			double specificHeatCapacity = (averageE2 - averageE * averageE) / (T * T) * N;
+			double magneticSusceptibility = (averageM2 - averageM * averageM) / (T) * N;
 
 
 			plottingValuesEnergy[t] = energyPerSite;
 			plottingValuesMagnetism[t] = magnetizationPerSite;
-			plottingValuesSpecificHeatCapacity[t] = specificHeatPerSite;
-			plottingValuesMagneticSusceptibility[t] = magneticSusceptibilityPerSite;
+			plottingValuesSpecificHeatCapacity[t] = specificHeatCapacity;
+			plottingValuesMagneticSusceptibility[t] = magneticSusceptibility;
 
 #pragma omp critical // <-- Code in a "ciritical block" is only run one thread at a time. Avoids garbled screen output.
 			{
@@ -163,8 +163,8 @@ int main(int argc, char **argv)
 
 				cout << "All states Average magnetization (per spin site): " << magnetizationPerSite << endl;
 
-				cout << "Specific heat capacity (per spin site): " << specificHeatPerSite << endl;
-				cout << "Susceptibility (per spin site): " << magneticSusceptibilityPerSite << endl;
+				cout << "Specific heat capacity (per spin site): " << specificHeatCapacity << endl;
+				cout << "Susceptibility (per spin site): " << magneticSusceptibility << endl;
 
 
 				std::cout << quantity[t] << std::endl;
