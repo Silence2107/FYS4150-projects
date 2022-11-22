@@ -1,7 +1,5 @@
 #!/bin/bash
 
-touch output-rand-T2-e.csv output-rand-T2-m.csv;
-
 L=20;
 temp_arr=(1.0 2.4);
 
