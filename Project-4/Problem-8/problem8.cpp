@@ -57,8 +57,11 @@ int main(int argc, char **argv)
 
 	//vector to store temperature values
 	int numTempSteps = 20;
-	std::vector<double> T_values(numTempSteps);
-	std::vector<double> quantity(numTempSteps);
+	vector<double> T_values(numTempSteps);
+	vector<double> plottingValuesEnergy(numTempSteps);
+	vector<double> plottingValuesMagnetism(numTempSteps);
+	vector<double> plottingValuesSpecificHeatCapacity(numTempSteps);
+	vector<double> plottingValuesMagneticSusceptibility(numTempSteps);
 
 
 #pragma omp parallel // Start parallel region
@@ -143,11 +146,15 @@ int main(int argc, char **argv)
 			double magneticSusceptibilityPerSite = (averageM2 - averageM * averageM) / (T) * N;
 
 
-			quantity[t] = specificHeatPerSite;
-
+			plottingValuesEnergy[t] = energyPerSite;
+			plottingValuesMagnetism[t] = magnetizationPerSite;
+			plottingValuesSpecificHeatCapacity[t] = specificHeatPerSite;
+			plottingValuesMagneticSusceptibility[t] = magneticSusceptibilityPerSite;
 
 #pragma omp critical // <-- Code in a "ciritical block" is only run one thread at a time. Avoids garbled screen output.
 			{
+				/*
+				//Code block used in debugging for small values.
 				cout << "=====================================================================" << endl;
 				cout << "For temperature T=" << T << endl;
 
@@ -162,11 +169,9 @@ int main(int argc, char **argv)
 
 				std::cout << quantity[t] << std::endl;
 				std::cout << T_values[t] << std::endl;
+				*/
 
 			}
-
-
-
 
 
 
@@ -174,20 +179,14 @@ int main(int argc, char **argv)
 
 
 
-
-
-
-
-
 	} // End entire parallel region
 
 
 
-	two_columns_to_csv("test.csv", T_values,  quantity , ",", false, 7);
-
-
-
-
+	two_columns_to_csv("energy.csv", T_values,  plottingValuesEnergy , ",", false, 7);
+	two_columns_to_csv("magnetism.csv", T_values,  plottingValuesMagnetism , ",", false, 7);
+	two_columns_to_csv("specificheat.csv", T_values,  plottingValuesSpecificHeatCapacity , ",", false, 7);
+	two_columns_to_csv("susceptibility.csv", T_values,  plottingValuesMagneticSusceptibility , ",", false, 7);
 
 
 	return 0;
