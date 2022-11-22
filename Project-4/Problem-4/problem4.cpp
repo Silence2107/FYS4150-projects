@@ -49,8 +49,8 @@ int main(int argc, char **argv)
 	generator.seed(base_seed);
 
 	// Setting a random starting matrix. The other alternative is initOrderedSpinMatrix, that will be useful for problem 5b.
-	imat latticeMatrix = initUnorderedSpinMatrix(L, uniform_dist, generator);
-
+	//imat latticeMatrix = initUnorderedSpinMatrix(L, uniform_dist, generator);
+	imat latticeMatrix = initOrderedSpinMatrix(L);
 	// Show the Matrix in stdout, only if small enough to easily fit screen.
 	if (L < 10)
 	{
