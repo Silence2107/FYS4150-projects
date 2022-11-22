@@ -57,8 +57,11 @@ int main(int argc, char **argv)
 
 	//vector to store temperature values
 	int numTempSteps = 20;
-	std::vector<double> T_values(numTempSteps);
-	std::vector<double> quantity(numTempSteps);
+	vector<double> T_values(numTempSteps);
+	vector<double> plottingValuesEnergy(numTempSteps);
+	vector<double> plottingValuesMagnetism(numTempSteps);
+	vector<double> plottingValuesSpecificHeatCapacity(numTempSteps);
+	vector<double> plottingValuesMagneticSusceptibility(numTempSteps);
 
 
 #pragma omp parallel // Start parallel region
@@ -123,10 +126,10 @@ int main(int argc, char **argv)
 				double M = calculateTotalAbsoluteMagnetization(latticeMatrix, L);
 
 				// We could also optimize just keep the total sum, and perform addition in each loop step, but to start with it is useful to be able to plot everything.
-				everyE[i] = E;
-				everyM[i] = M;
-				everyE2[i] = E * E;
-				everyM2[i] = M * M;
+				everyE[i] = E / N;
+				everyM[i] = M / N;
+				everyE2[i] = E*E / (N*N);
+				everyM2[i] = M*M / (N*N);
 			}
 
 			// Now we can calculate avarage values of quantities and quantities squared.
@@ -135,18 +138,23 @@ int main(int argc, char **argv)
 			double averageE2 = std::accumulate(everyE2.begin(), everyE2.end(), 0.0) / monteCarlCyclesToRun;
 			double averageM2 = std::accumulate(everyM2.begin(), everyM2.end(), 0.0) / monteCarlCyclesToRun;
 
-			double energyPerSite = averageE / N;
-			double magnetizationPerSite = averageM / N;
+			double energyPerSite = averageE;
+			double magnetizationPerSite = averageM;
 
-			double specificHeatPerSite = (averageE2 - averageE * averageE) / (T * T * N * N);
-			double magneticSusceptibilityPerSite = (averageM2 - averageM * averageM) / (T * N * N);
+			//Using same strategy for getting correct value per spin as in problem 4. Experience show it makes it more numerically reliable to multiple with N last here. 
+			double specificHeatCapacity = (averageE2 - averageE * averageE) / (T * T) * N;
+			double magneticSusceptibility = (averageM2 - averageM * averageM) / (T) * N;
 
 
-			quantity[t] = specificHeatPerSite;
-
+			plottingValuesEnergy[t] = energyPerSite;
+			plottingValuesMagnetism[t] = magnetizationPerSite;
+			plottingValuesSpecificHeatCapacity[t] = specificHeatCapacity;
+			plottingValuesMagneticSusceptibility[t] = magneticSusceptibility;
 
 #pragma omp critical // <-- Code in a "ciritical block" is only run one thread at a time. Avoids garbled screen output.
 			{
+				/*
+				//Code block used in debugging for small values.
 				cout << "=====================================================================" << endl;
 				cout << "For temperature T=" << T << endl;
 
@@ -155,17 +163,15 @@ int main(int argc, char **argv)
 
 				cout << "All states Average magnetization (per spin site): " << magnetizationPerSite << endl;
 
-				cout << "Specific heat capacity (per spin site): " << specificHeatPerSite << endl;
-				cout << "Susceptibility (per spin site): " << magneticSusceptibilityPerSite << endl;
+				cout << "Specific heat capacity (per spin site): " << specificHeatCapacity << endl;
+				cout << "Susceptibility (per spin site): " << magneticSusceptibility << endl;
 
 
 				std::cout << quantity[t] << std::endl;
 				std::cout << T_values[t] << std::endl;
+				*/
 
 			}
-
-
-
 
 
 
@@ -173,20 +179,14 @@ int main(int argc, char **argv)
 
 
 
-
-
-
-
-
 	} // End entire parallel region
 
 
 
-	two_columns_to_csv("test.csv", T_values,  quantity , ",", false, 7);
-
-
-
-
+	two_columns_to_csv("energy.csv", T_values,  plottingValuesEnergy , ",", false, 7);
+	two_columns_to_csv("magnetism.csv", T_values,  plottingValuesMagnetism , ",", false, 7);
+	two_columns_to_csv("specificheat.csv", T_values,  plottingValuesSpecificHeatCapacity , ",", false, 7);
+	two_columns_to_csv("susceptibility.csv", T_values,  plottingValuesMagneticSusceptibility , ",", false, 7);
 
 
 	return 0;
