@@ -56,9 +56,12 @@ int main(int argc, char **argv)
 
 
 	//vector to store temperature values
-	int numTempSteps = 15;
-	std::vector<double> T_values(numTempSteps);
-	std::vector<double> quantity(numTempSteps);
+	int numTempSteps = 20;
+	vector<double> T_values(numTempSteps);
+	vector<double> plottingValuesEnergy(numTempSteps);
+	vector<double> plottingValuesMagnetism(numTempSteps);
+	vector<double> plottingValuesSpecificHeatCapacity(numTempSteps);
+	vector<double> plottingValuesMagneticSusceptibility(numTempSteps);
 
 
 #pragma omp parallel // Start parallel region
@@ -138,15 +141,20 @@ int main(int argc, char **argv)
 			double energyPerSite = averageE;
 			double magnetizationPerSite = averageM;
 
-			double specificHeatPerSite = N * (averageE2 - averageE * averageE) / (T * T);
-			double magneticSusceptibilityPerSite = N * (averageM2 - averageM * averageM) / (T);
+			//Using same strategy for getting correct value per spin as in problem 4. Experience show it makes it more numerically reliable to multiple with N last here. 
+			double specificHeatCapacity = (averageE2 - averageE * averageE) / (T * T) * N;
+			double magneticSusceptibility = (averageM2 - averageM * averageM) / (T) * N;
 
 
-			quantity[t] = specificHeatPerSite;
-
+			plottingValuesEnergy[t] = energyPerSite;
+			plottingValuesMagnetism[t] = magnetizationPerSite;
+			plottingValuesSpecificHeatCapacity[t] = specificHeatCapacity;
+			plottingValuesMagneticSusceptibility[t] = magneticSusceptibility;
 
 #pragma omp critical // <-- Code in a "ciritical block" is only run one thread at a time. Avoids garbled screen output.
 			{
+				/*
+				//Code block used in debugging for small values.
 				cout << "=====================================================================" << endl;
 				cout << "For temperature T=" << T << endl;
 
@@ -155,17 +163,15 @@ int main(int argc, char **argv)
 
 				cout << "All states Average magnetization (per spin site): " << magnetizationPerSite << endl;
 
-				cout << "Specific heat capacity (per spin site): " << specificHeatPerSite << endl;
-				cout << "Susceptibility (per spin site): " << magneticSusceptibilityPerSite << endl;
+				cout << "Specific heat capacity (per spin site): " << specificHeatCapacity << endl;
+				cout << "Susceptibility (per spin site): " << magneticSusceptibility << endl;
 
 
 				std::cout << quantity[t] << std::endl;
 				std::cout << T_values[t] << std::endl;
+				*/
 
 			}
-
-
-
 
 
 
@@ -173,20 +179,14 @@ int main(int argc, char **argv)
 
 
 
-
-
-
-
-
 	} // End entire parallel region
 
 
 
-	two_columns_to_csv("test.csv", T_values,  quantity , ",", false, 7);
-
-
-
-
+	two_columns_to_csv("energy.csv", T_values,  plottingValuesEnergy , ",", false, 7);
+	two_columns_to_csv("magnetism.csv", T_values,  plottingValuesMagnetism , ",", false, 7);
+	two_columns_to_csv("specificheat.csv", T_values,  plottingValuesSpecificHeatCapacity , ",", false, 7);
+	two_columns_to_csv("susceptibility.csv", T_values,  plottingValuesMagneticSusceptibility , ",", false, 7);
 
 
 	return 0;
