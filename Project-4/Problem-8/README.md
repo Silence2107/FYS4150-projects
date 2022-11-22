@@ -22,4 +22,4 @@ Create plot with commands like (for each csv-file):
 python3 ./plotter3.py  --csv specificheat40.csv
 However,at the time of this writing Python script must me manually edited between runs to get the wanted axis units, etc.
 
-Alternativaly the notebook file plotter_notebook.ipynb may be used.
+Alternativaly the notebook file plotter_notebook.ipynb located in sampledata folder may be used.
