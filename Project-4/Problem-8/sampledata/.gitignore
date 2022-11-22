@@ -1,0 +1,2 @@
+#Making an exception for '.csv files in this folder only, as the ones produced in problem 8 is under 1kB of data and takes a very long time to produce.
+!*.csv

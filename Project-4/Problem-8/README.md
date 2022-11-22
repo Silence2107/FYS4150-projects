@@ -12,5 +12,14 @@ Suggested small function test (quick run, sample data file that fits on screen)
 `./problem8.exe 20 1000`
 
 Commands for producing plots for report will take significant time to run.
-To be filled in here.
+./problem8.exe 20 500000
+./problem8.exe 40 500000
+./problem8.exe 60 500000
+./problem8.exe 80 500000
+./problem8.exe 100 500000
 
+Create plot with commands like (for each csv-file):
+python3 ./plotter3.py  --csv specificheat40.csv
+However,at the time of this writing Python script must me manually edited between runs to get the wanted axis units, etc.
+
+Alternativaly the notebook file plotter_notebook.ipynb located in sampledata folder may be used.
