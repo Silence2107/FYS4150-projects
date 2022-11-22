@@ -4,28 +4,10 @@
 #include <armadillo>
 #include <cmath>
 
-arma::mat create_tridiagonal(int N, double h); 
+/// @brief Creates a problem-specific tridiagonal matrix with N elements and structure -1/h^2, 2/h^2, -1/h^2
+/// @param N Size of matrix
+/// @param h Step size that is used for elements calculation
+/// @return Tridiagonal matrix
+arma::mat create_tridiagonal(int N, double h);
 
 #endif
-  
-// arma::mat create_tridiagonal(int N, double h)
-// {
-//     double h2=pow(h,2), a=-1/h2, d=2/h2;
-
-//     arma::mat A = arma::mat(N,N).fill(0.000); 
-
-//     // set first and last row values
-//     A(0,0)=d; A(0,1)=a; 
-//     A(N-1,N-2)=a; A(N-1,N-1)=d;
-
-//     //set other rows
-//     for (int i=1; i < N-1; i++) {
-//         A(i,i) = d;
-//         A(i,i-1) = a; 
-//         A(i,i+1) = a; 
-//     }
-  
-//   return create_tridiagonal(A,a,d);
-// }
-
-
