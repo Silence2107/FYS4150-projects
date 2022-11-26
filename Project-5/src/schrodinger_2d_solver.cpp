@@ -4,13 +4,9 @@
 
 #include <armadillo>
 
-std::tuple<arma::cx_mat, arma::cx_mat> generateAandB(const arma::cx_vec &psi, const arma::mat &V, double dt, size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound)
+std::tuple<arma::cx_mat, arma::cx_mat> generateCrankNicolsonAB(const arma::mat &V, double dt, double dx, double dy, size_t Nx, size_t Ny)
 {
-    
-    double x_min = x_bound(0), x_max = x_bound(1);
-    double y_min = y_bound(0), y_max = y_bound(1);
 
-    double dx = (x_max - x_min) / (Nx - 1), dy = (y_max - y_min) / (Ny - 1);
     auto im_time_step = arma::cx_double(0, 1) * dt;
 
     // first introduce A and B matrices
@@ -67,9 +63,14 @@ std::tuple<arma::cx_mat, arma::cx_mat> generateAandB(const arma::cx_vec &psi, co
 
 arma::cx_vec schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, double dt, size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound)
 {
+    double x_min = x_bound(0), x_max = x_bound(1);
+    double y_min = y_bound(0), y_max = y_bound(1);
+
+    double dx = (x_max - x_min) / (Nx - 1), dy = (y_max - y_min) / (Ny - 1);
+
     arma::cx_mat A, B;
-    std::tie(A, B) = generateAandB(psi, V, dt, Nx, Ny, x_bound, y_bound);
-    //Or if we switch to C++ 17 we can just do: auto [A, B] = generateAandB(psi, V_discrete, dt, Nx, Ny, x_bound, y_bound);
+    std::tie(A, B) = generateCrankNicolsonAB(V, dt, dx, dy, Nx, Ny);
+    //Or if we switch to C++ 17 we can just do: auto [A, B] = generateCrankNicolsonAB(V, dt, dx, dy, Nx, Ny);
 
     // now it takes to solve A psi_new = B * psi
     return arma::solve(A, B * psi);
