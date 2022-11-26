@@ -4,11 +4,9 @@
 
 #include <armadillo>
 
-arma::cx_vec schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, double dt, size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound)
+std::tuple<arma::cx_mat, arma::cx_mat> generate_crank_nicolson_A_and_B(const arma::mat &V, double dt, double dx, double dy, size_t Nx, size_t Ny)
 {
-    double x_min = x_bound(0), x_max = x_bound(1);
-    double y_min = y_bound(0), y_max = y_bound(1);
-    double dx = (x_max - x_min) / (Nx - 1), dy = (y_max - y_min) / (Ny - 1);
+
     auto im_time_step = arma::cx_double(0, 1) * dt;
 
     // first introduce A and B matrices
@@ -59,6 +57,20 @@ arma::cx_vec schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, dou
         }
         // else is zero already
     }
+
+    return std::make_tuple(A, B);
+}
+
+arma::cx_vec schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, double dt, size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound)
+{
+    double x_min = x_bound(0), x_max = x_bound(1);
+    double y_min = y_bound(0), y_max = y_bound(1);
+
+    double dx = (x_max - x_min) / (Nx - 1), dy = (y_max - y_min) / (Ny - 1);
+
+    arma::cx_mat A, B;
+    std::tie(A, B) = generate_crank_nicolson_A_and_B(V, dt, dx, dy, Nx, Ny);
+    //Or if we switch to C++ 17 we can just do: auto [A, B] = generate_crank_nicolson_A_and_B(V, dt, dx, dy, Nx, Ny);
 
     // now it takes to solve A psi_new = B * psi
     return arma::solve(A, B * psi);
