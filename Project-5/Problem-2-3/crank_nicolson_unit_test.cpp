@@ -26,7 +26,7 @@ int main()
 
     double dx = (x_max - x_min) / (Nx - 1), dy = (y_max - y_min) / (Ny - 1);
 
-    auto [A, B] = generateCrankNicolsonAB(V_matr, dt, dx, dy, Nx, Ny);
+    auto [A, B] = generate_crank_nicolson_A_and_B(V_matr, dt, dx, dy, Nx, Ny);
 
     std::complex<double> rExpected = 8.000e-04 * 1i;
 

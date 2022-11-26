@@ -53,6 +53,6 @@ arma::cx_vec schrodinger_solver_cached(arma::cx_cube &cache, const arma::cx_vec 
 /// @param Nx Number of grid points in x direction (for square matrix this is generally called M)
 /// @param Ny Number of grid points in y direction
 /// @return A c++ standard tuple containin two Armadillo matrices
-std::tuple<arma::cx_mat, arma::cx_mat> generateCrankNicolsonAB(const arma::mat &V, double dt, double dx, double dy, size_t Nx, size_t Ny);
+std::tuple<arma::cx_mat, arma::cx_mat> generate_crank_nicolson_A_and_B(const arma::mat &V, double dt, double dx, double dy, size_t Nx, size_t Ny);
 
 #endif

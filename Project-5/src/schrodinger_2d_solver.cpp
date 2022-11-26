@@ -4,7 +4,7 @@
 
 #include <armadillo>
 
-std::tuple<arma::cx_mat, arma::cx_mat> generateCrankNicolsonAB(const arma::mat &V, double dt, double dx, double dy, size_t Nx, size_t Ny)
+std::tuple<arma::cx_mat, arma::cx_mat> generate_crank_nicolson_A_and_B(const arma::mat &V, double dt, double dx, double dy, size_t Nx, size_t Ny)
 {
 
     auto im_time_step = arma::cx_double(0, 1) * dt;
@@ -69,8 +69,8 @@ arma::cx_vec schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, dou
     double dx = (x_max - x_min) / (Nx - 1), dy = (y_max - y_min) / (Ny - 1);
 
     arma::cx_mat A, B;
-    std::tie(A, B) = generateCrankNicolsonAB(V, dt, dx, dy, Nx, Ny);
-    //Or if we switch to C++ 17 we can just do: auto [A, B] = generateCrankNicolsonAB(V, dt, dx, dy, Nx, Ny);
+    std::tie(A, B) = generate_crank_nicolson_A_and_B(V, dt, dx, dy, Nx, Ny);
+    //Or if we switch to C++ 17 we can just do: auto [A, B] = generate_crank_nicolson_A_and_B(V, dt, dx, dy, Nx, Ny);
 
     // now it takes to solve A psi_new = B * psi
     return arma::solve(A, B * psi);
