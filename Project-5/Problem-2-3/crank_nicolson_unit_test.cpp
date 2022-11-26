@@ -1,4 +1,3 @@
-
 #include "../include/schrodinger_2d_solver.h"
 #include "../include/auxiliaries.h"
 
@@ -28,15 +27,19 @@ int main()
 
     auto [A, B] = generate_crank_nicolson_A_and_B(V_matr, dt, dx, dy, Nx, Ny);
 
-    std::complex<double> rExpected = 8.000e-04 * 1i;
+    //Testing a couple arbitrary values from matrces for expected values. 
+    //For now only one value from each matrix we know should be r and -r. 
+    //r is defined as i*dt/(2h^2) or for rectangular case i*dt/(2dxdy)
+    //This could/should be extended to check more elemenets. 
+    std::complex<double> rExpected = 1i*dt/(2*dx*dy); //should be 8.000e-04 * 1i;
 
-    std::complex<double> error1 = rExpected - (-A(3,0));
-    std::complex<double> error2 = rExpected - (B(3,0));
+    std::complex<double> error1 = rExpected - (-A(3, 0));
+    std::complex<double> error2 = rExpected - (B(3, 0));
 
     double epsilon = 1.0e-15;
 
-    if(std::norm(error1) < epsilon && std::norm(error2) < epsilon)
+    if (std::norm(error1) < epsilon && std::norm(error2) < epsilon)
     {
-        std::cout << "Test ok!" << std::endl;
+        std::cout << "  Test ok!" << std::endl;
     }
 }
