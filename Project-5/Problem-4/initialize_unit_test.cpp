@@ -1,5 +1,6 @@
 #include "../include/schrodinger_2d_solver.h"
 #include "../include/schrodinger_2d_initializer.h"
+#include "../include/auxiliaries.h"
 
 #include <iostream>
 #include <armadillo>
