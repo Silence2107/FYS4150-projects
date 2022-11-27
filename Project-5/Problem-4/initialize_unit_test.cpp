@@ -9,7 +9,7 @@ int main()
 {
     // unit test for initializing wave function. Then also running schrodinger_solver to check if it stays normalized. 
 
-    size_t Nx = 5, Ny = 5;
+    size_t Nx = 10, Ny = 10;
     arma::vec x_bound = {0, 1}, y_bound = {0, 1};
     arma::mat V_matr = arma::zeros<arma::mat>(Nx - 2, Ny - 2);
 
