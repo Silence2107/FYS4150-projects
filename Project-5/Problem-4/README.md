@@ -1,5 +1,7 @@
-# Problem 2-3 manual
-Solvers for Shrödinger equation with Crank Nicelson scheme. 
+# Problem 4 manual
+Setting up initial condition, by setting wave function to a chosen wave packet shape. 
+In this folder we test the functionality in a unit test setting, first setting up condition and then running some steps in the solver.
+Output to in inspected manually for now. 
 
 # Usage
 Small programs for unit testing thereof. 
