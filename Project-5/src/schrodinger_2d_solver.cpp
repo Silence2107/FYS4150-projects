@@ -4,14 +4,14 @@
 
 #include <armadillo>
 
-std::tuple<arma::cx_mat, arma::cx_mat> generate_crank_nicolson_A_and_B(const arma::mat &V, double dt, double dx, double dy, size_t Nx, size_t Ny)
+std::tuple<arma::sp_cx_mat, arma::sp_cx_mat> generate_crank_nicolson_A_and_B(const arma::mat &V, double dt, double dx, double dy, size_t Nx, size_t Ny)
 {
 
     auto im_time_step = arma::cx_double(0, 1) * dt;
 
     // first introduce A and B matrices
-    arma::cx_mat A = arma::zeros<arma::cx_mat>((Nx - 2) * (Ny - 2), (Nx - 2) * (Ny - 2));
-    arma::cx_mat B = arma::zeros<arma::cx_mat>((Nx - 2) * (Ny - 2), (Nx - 2) * (Ny - 2));
+    arma::sp_cx_mat A = arma::sp_cx_mat((Nx - 2) * (Ny - 2), (Nx - 2) * (Ny - 2));
+    arma::sp_cx_mat B = arma::sp_cx_mat((Nx - 2) * (Ny - 2), (Nx - 2) * (Ny - 2));
 
     // fill them
     for (size_t col = 0; col < (Nx - 2) * (Ny - 2); col++)
@@ -65,10 +65,11 @@ arma::cx_vec schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, dou
 {
     auto [dx, dy] = find_dx_and_dy(Nx, Ny, x_bound, y_bound);
 
-    auto [A, B] = generate_crank_nicolson_A_and_B(V, dt, dx, dy, Nx, Ny);
+    auto&& [A, B] = generate_crank_nicolson_A_and_B(V, dt, dx, dy, Nx, Ny);
 
     // now it takes to solve A psi_new = B * psi
-    return arma::solve(A, B * psi);
+    //superlu is one of multiple algoritms for solving sparse matrix equations. It appears to perform well for our case, as it's fastests for Nx=Ny=40.
+    return arma::spsolve(A, B * psi, "superlu"); 
 }
 
 arma::cx_vec schrodinger_solver(const arma::cx_vec &psi, const std::function<double(double, double)> &V, double dt, size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound)
