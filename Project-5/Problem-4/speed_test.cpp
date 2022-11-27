@@ -16,6 +16,12 @@ using namespace std::chrono;
  */
 std::tuple<arma::cx_mat, arma::cx_mat> dense_generate_crank_nicolson_A_and_B(const arma::mat &V, double dt, double dx, double dy, size_t Nx, size_t Ny);
 arma::cx_vec dense_schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, double dt, size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound);
+/*** 
+ * Yet another few variants to explore different types of sparse matrix algorithms.
+*/
+arma::cx_vec default_sparse_schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, double dt, size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound);
+arma::cx_vec superlu_schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, double dt, size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound);
+arma::cx_vec lapack_schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, double dt, size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound);
 
 string timeInSeconds(double milliseconds)
 {
@@ -35,12 +41,12 @@ int main()
 {
     // unit test for initializing wave function. Then also running schrodinger_solver to check if it stays normalized.
 
-    size_t Nx = 30, Ny = 30;
+    size_t Nx = 40, Ny = 40;
     arma::vec x_bound = {0, 1}, y_bound = {0, 1};
     arma::mat V_matr = arma::zeros<arma::mat>(Nx - 2, Ny - 2);
 
     int numIterations = 1000;
-    int numWarmUpIterations = 50;
+    int numWarmUpIterations = 200;
 
     double dt = 0.0001; // fine dt is REQUIRED for reasonable results, however be mindful about stability
 
@@ -66,7 +72,7 @@ int main()
         std::cout << "\n Warming up.\n";
         auto start = high_resolution_clock::now(); // Record starting time.
         // invoke update
-        auto psi_new = schrodinger_solver(psi_old, V_matr, dt, Nx, Ny, x_bound, y_bound);
+        auto psi_new = dense_schrodinger_solver(psi_old, V_matr, dt, Nx, Ny, x_bound, y_bound);
         for (size_t i = 0; i < numWarmUpIterations - 1; ++i)
         {
             psi_new = dense_schrodinger_solver(psi_new, V_matr, dt, Nx, Ny, x_bound, y_bound);
@@ -91,19 +97,50 @@ int main()
         cout << "Time taken by dense matrix solving " << numIterations << " iterations: " << timeInSeconds(duration.count()) << " seconds." << endl;
     }
 
-    // Do the same with the new sparse algoritm
+    // Do the same with the default sparse algoritm
     {
-        std::cout << "\n Test 2. Timing of sparse matrix solving.\n";
+        std::cout << "\n Test 2. Timing of sparse matrix solving, variant: default\n";
         auto start = high_resolution_clock::now(); // Record starting time.
         // invoke update
-        auto psi_new = dense_schrodinger_solver(psi_old, V_matr, dt, Nx, Ny, x_bound, y_bound);
+        auto psi_new = default_sparse_schrodinger_solver(psi_old, V_matr, dt, Nx, Ny, x_bound, y_bound);
         for (size_t i = 0; i < numIterations - 1; ++i)
         {
-            psi_new = schrodinger_solver(psi_new, V_matr, dt, Nx, Ny, x_bound, y_bound);
+            psi_new = default_sparse_schrodinger_solver(psi_new, V_matr, dt, Nx, Ny, x_bound, y_bound);
         }
         auto stop = high_resolution_clock::now(); // Record ending time.
         auto duration = duration_cast<microseconds>(stop - start);
-        cout << "Time taken by sparse matrix solving " << numIterations << " iterations: " << timeInSeconds(duration.count()) << " seconds." << endl;
+        cout << "Time taken by default sparse matrix solving " << numIterations << " iterations: " << timeInSeconds(duration.count()) << " seconds." << endl;
+    }
+    
+    // Do the same with the superlu sparse algoritm
+    {
+        std::cout << "\n Test 3. Timing of sparse matrix solving, variant: superlu\n";
+        auto start = high_resolution_clock::now(); // Record starting time.
+        // invoke update
+        auto psi_new = superlu_schrodinger_solver(psi_old, V_matr, dt, Nx, Ny, x_bound, y_bound);
+        for (size_t i = 0; i < numIterations - 1; ++i)
+        {
+            psi_new = superlu_schrodinger_solver(psi_new, V_matr, dt, Nx, Ny, x_bound, y_bound);
+        }
+        auto stop = high_resolution_clock::now(); // Record ending time.
+        auto duration = duration_cast<microseconds>(stop - start);
+        cout << "Time taken by superlu sparse matrix solving " << numIterations << " iterations: " << timeInSeconds(duration.count()) << " seconds." << endl;
+    }
+    
+    // Do the same with the lapack sparse algoritm
+    {
+        std::cout << "\n Test 4. Timing of sparse matrix solving, variant: lapack.\n";
+        auto start = high_resolution_clock::now(); // Record starting time.
+        // invoke update
+        auto psi_new = lapack_schrodinger_solver(psi_old, V_matr, dt, Nx, Ny, x_bound, y_bound);
+        for (size_t i = 0; i < numIterations - 1; ++i)
+        {
+            psi_new = lapack_schrodinger_solver(psi_new, V_matr, dt, Nx, Ny, x_bound, y_bound);
+            //psi_new = schrodinger_solver(psi_new, V_matr, dt, Nx, Ny, x_bound, y_bound);
+        }
+        auto stop = high_resolution_clock::now(); // Record ending time.
+        auto duration = duration_cast<microseconds>(stop - start);
+        cout << "Time taken by lapack sparse matrix solving " << numIterations << " iterations: " << timeInSeconds(duration.count()) << " seconds." << endl;
     }
 }
 
@@ -172,4 +209,37 @@ arma::cx_vec dense_schrodinger_solver(const arma::cx_vec &psi, const arma::mat &
 
     // now it takes to solve A psi_new = B * psi
     return arma::solve(A, B * psi);
+}
+
+arma::cx_vec default_sparse_schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, double dt, size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound)
+{
+    auto [dx, dy] = find_dx_and_dy(Nx, Ny, x_bound, y_bound);
+
+    auto [A, B] = generate_crank_nicolson_A_and_B(V, dt, dx, dy, Nx, Ny);
+
+    // now it takes to solve A psi_new = B * psi
+    //lapack is one of multiple algoritms for solving sparse matrix equations. It appears to perform well for our case.
+    return arma::spsolve(A, B * psi);
+}
+
+arma::cx_vec superlu_schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, double dt, size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound)
+{
+    auto [dx, dy] = find_dx_and_dy(Nx, Ny, x_bound, y_bound);
+
+    auto [A, B] = generate_crank_nicolson_A_and_B(V, dt, dx, dy, Nx, Ny);
+
+    // now it takes to solve A psi_new = B * psi
+    //lapack is one of multiple algoritms for solving sparse matrix equations. It appears to perform well for our case.
+    return arma::spsolve(A, B * psi, "superlu");
+}
+
+arma::cx_vec lapack_schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, double dt, size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound)
+{
+    auto [dx, dy] = find_dx_and_dy(Nx, Ny, x_bound, y_bound);
+
+    auto [A, B] = generate_crank_nicolson_A_and_B(V, dt, dx, dy, Nx, Ny);
+
+    // now it takes to solve A psi_new = B * psi
+    //lapack is one of multiple algoritms for solving sparse matrix equations. It appears to perform well for our case.
+    return arma::spsolve(A, B * psi, "lapack");
 }
