@@ -1,6 +1,5 @@
 #include "../include/schrodinger_2d_solver.h"
 #include "../include/schrodinger_2d_initializer.h"
-#include "../include/auxiliaries.h"
 
 #include <iostream>
 #include <armadillo>
@@ -15,12 +14,10 @@ int main()
 
     double dt = 0.0001; // fine dt is REQUIRED for reasonable results, however be mindful about stability
 
-    auto [dx, dy] = find_dx_and_dy(Nx, Ny, x_bound, y_bound);
-
-    // initialize psi
+    //Initialize wave function psi.
     //Picking some physical values for the wave packet. 
     //For this unit test we could really use anything. However the numbers below are taken from an actual sample run we will do later.
-    arma::cx_vec psi_old = initialize_particle_wavefunction(Nx, Ny, dx, dy, 0.25, 0.5, 0.05, 0.05, 200.0, 0.0);
+    arma::cx_vec psi_old = initialize_particle_wavefunction(Nx, Ny, x_bound, y_bound, 0.25, 0.5, 0.05, 0.05, 200.0, 0.0);
 
     // 1. check that the norm of the solution is preserved
     std::cout << "\n Test 1. \n";
