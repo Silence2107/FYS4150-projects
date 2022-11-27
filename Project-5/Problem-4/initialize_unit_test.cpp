@@ -7,19 +7,22 @@
 
 int main()
 {
-    // unit test for schrodinger_solver
+    // unit test for initializing wave function. Then also running schrodinger_solver to check if it stays normalized. 
 
     size_t Nx = 5, Ny = 5;
     arma::vec x_bound = {0, 1}, y_bound = {0, 1};
     arma::mat V_matr = arma::zeros<arma::mat>(Nx - 2, Ny - 2);
-    arma::cx_vec psi_old = arma::zeros<arma::cx_vec>((Nx - 2) * (Ny - 2));
 
-    // psi_old
-    psi_old(0) = 1.0;
     double dt = 0.0001; // fine dt is REQUIRED for reasonable results, however be mindful about stability
 
-    // normalize psi
-    psi_old = psi_old / arma::norm(psi_old);
+    // initialize psi
+    double x_min = x_bound(0), x_max = x_bound(1);  //TODO: these 3 lines getting duplicate. Refactor somehow, maybe into auxilaries.
+    double y_min = y_bound(0), y_max = y_bound(1);
+    double dx = (x_max - x_min) / (Nx - 1), dy = (y_max - y_min) / (Ny - 1);
+
+    //Picking some physical values for the wave packet. 
+    //For this unit test we could really use anything. However the numbers below are taken from an actual sample run we will do later.
+    arma::cx_vec psi_old = initialize_particle_wavefunction(Nx, Ny, dx, dy, 0.25, 0.5, 0.05, 0.05, 200.0, 0.0);
 
     // 1. check that the norm of the solution is preserved
     std::cout << "\n Test 1. \n";
