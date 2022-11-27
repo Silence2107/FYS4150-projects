@@ -49,6 +49,53 @@ int main()
         }
     }
 
+    // Measure time performance on older dense matrix code. Making a code block for simple reuse if variable declarations later.
+    {
+        std::cout << "\n Test 1. Timeing of dense matrix solving.\n";
+        auto start = high_resolution_clock::now(); // Record starting time.
+        // invoke update
+        auto psi_new = schrodinger_solver(psi_old, V_matr, dt, Nx, Ny, x_bound, y_bound);
+        for (size_t i = 0; i < numIterations - 1; ++i)
+        {
+            psi_new = dense_schrodinger_solver(psi_new, V_matr, dt, Nx, Ny, x_bound, y_bound);
+        }
+        // print psi_new as matrix
+        arma::cx_mat psi_new_mat = arma::zeros<arma::cx_mat>(Nx - 2, Ny - 2);
+        for (size_t i = 0; i < Nx - 2; i++)
+        {
+            for (size_t j = 0; j < Ny - 2; j++)
+            {
+                psi_new_mat(i, j) = psi_new(flatten_index(i, j, Nx - 2));
+            }
+        }
+        auto stop = high_resolution_clock::now(); // Record ending time.
+        auto duration = duration_cast<microseconds>(stop - start);
+        cout << "Time taken by dense matrix solving " << numIterations << " iterations: " << duration.count() << " microseconds." << endl;
+    }
+
+    // Do the same with the new sparse algoritm
+    {
+        std::cout << "\n Test 2. Timeing of sparse matrix solving.\n";
+        auto start = high_resolution_clock::now(); // Record starting time.
+        // invoke update
+        auto psi_new = dense_schrodinger_solver(psi_old, V_matr, dt, Nx, Ny, x_bound, y_bound);
+        for (size_t i = 0; i < numIterations - 1; ++i)
+        {
+            psi_new = schrodinger_solver(psi_new, V_matr, dt, Nx, Ny, x_bound, y_bound);
+        }
+        // print psi_new as matrix
+        arma::cx_mat psi_new_mat = arma::zeros<arma::cx_mat>(Nx - 2, Ny - 2);
+        for (size_t i = 0; i < Nx - 2; i++)
+        {
+            for (size_t j = 0; j < Ny - 2; j++)
+            {
+                psi_new_mat(i, j) = psi_new(flatten_index(i, j, Nx - 2));
+            }
+        }
+        auto stop = high_resolution_clock::now(); // Record ending time.
+        auto duration = duration_cast<microseconds>(stop - start);
+        cout << "Time taken by sparse matrix solving " << numIterations << " iterations: " << duration.count() << " microseconds." << endl;
+    }
 }
 
 std::tuple<arma::cx_mat, arma::cx_mat> dense_generate_crank_nicolson_A_and_B(const arma::mat &V, double dt, double dx, double dy, size_t Nx, size_t Ny)
