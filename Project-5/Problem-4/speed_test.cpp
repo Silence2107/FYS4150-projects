@@ -46,7 +46,7 @@ int main()
     arma::mat V_matr = arma::zeros<arma::mat>(Nx - 2, Ny - 2);
 
     int numIterations = 1000;
-    int numWarmUpIterations = 200;
+    int numWarmUpIterations = 100;
 
     double dt = 0.0001; // fine dt is REQUIRED for reasonable results, however be mindful about stability
 
@@ -65,6 +65,8 @@ int main()
         }
     }
 
+    cout << "Working with a physical grid of " << Nx << " x " << Ny << " discrete coordinate points." << endl;
+    cout << "Solving for time step dt: " << dt << "s." << endl;
 
     // Warmup, to avoid second test looking faster just because some memory handling behind the scenes or something
     // just makes things faster after the first few iterations. 
@@ -95,6 +97,7 @@ int main()
         auto stop = high_resolution_clock::now(); // Record ending time.
         auto duration = duration_cast<microseconds>(stop - start);
         cout << "Time taken by dense matrix solving " << numIterations << " iterations: " << timeInSeconds(duration.count()) << " seconds." << endl;
+        cout << "Norm of wave final equation: " << arma::norm(psi_new) << endl;
     }
 
     // Do the same with the default sparse algoritm
@@ -110,6 +113,7 @@ int main()
         auto stop = high_resolution_clock::now(); // Record ending time.
         auto duration = duration_cast<microseconds>(stop - start);
         cout << "Time taken by default sparse matrix solving " << numIterations << " iterations: " << timeInSeconds(duration.count()) << " seconds." << endl;
+        cout << "Norm of wave final equation: " << arma::norm(psi_new) << endl;
     }
     
     // Do the same with the superlu sparse algoritm
@@ -125,6 +129,7 @@ int main()
         auto stop = high_resolution_clock::now(); // Record ending time.
         auto duration = duration_cast<microseconds>(stop - start);
         cout << "Time taken by superlu sparse matrix solving " << numIterations << " iterations: " << timeInSeconds(duration.count()) << " seconds." << endl;
+        cout << "Norm of wave final equation: " << arma::norm(psi_new) << endl;
     }
     
     // Do the same with the lapack sparse algoritm
@@ -141,6 +146,7 @@ int main()
         auto stop = high_resolution_clock::now(); // Record ending time.
         auto duration = duration_cast<microseconds>(stop - start);
         cout << "Time taken by lapack sparse matrix solving " << numIterations << " iterations: " << timeInSeconds(duration.count()) << " seconds." << endl;
+        cout << "Norm of wave final equation: " << arma::norm(psi_new) << endl;
     }
 }
 
