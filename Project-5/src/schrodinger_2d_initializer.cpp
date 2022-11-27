@@ -5,11 +5,15 @@
 
 using namespace std::complex_literals;
 
-arma::cx_vec initialize_particle_wavefunction(size_t Nx, size_t Ny, double dx, double dy, double x_center, double y_center,
-											  double x_spread, double y_spread, double px, double py)
+arma::cx_vec initialize_particle_wavefunction(size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound,
+											  double x_center, double y_center, double x_spread, double y_spread, double px, double py)
 {
 	// first introduce psi matrix - the digitalized wave function.
 	arma::cx_mat psi = arma::zeros<arma::cx_vec>((Nx - 2) * (Ny - 2));
+
+	auto [dx, dy] = find_dx_and_dy(Nx, Ny, x_bound, y_bound);
+	double x_min = x_bound(0);
+	double y_min = y_bound(0);
 
 	// fill it
 	for (size_t i = 0; i < Nx - 2; i++)
@@ -17,8 +21,8 @@ arma::cx_vec initialize_particle_wavefunction(size_t Nx, size_t Ny, double dx, d
 		for (size_t j = 0; j < Ny - 2; j++)
 		{
 			// Connecting physical coordinates x and y to matrix indices. Boundary points excluded.
-			double x = dx * (i + 1);
-			double y = dy * (j + 1);
+			double x = x_min + (i + 1) * dx;
+			double y = y_min + (j + 1) * dy;
 			// Build the large exponent expression given for u() in project spec.
 			std::complex<double> exp_1 = -(x - x_center) * (x - x_center) / 2 * (x_spread * x_spread);
 			std::complex<double> exp_2 = -(y - y_center) * (y - y_center) / 2 * (y_spread * y_spread);

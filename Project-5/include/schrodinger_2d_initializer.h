@@ -10,8 +10,8 @@
 /// Result is also normalized, as is customary with wave functions.
 /// @param Nx Number of grid points in x direction (for square matrix this is commonly called M)
 /// @param Ny Number of grid points in y direction
-/// @param dx Step length in x direction (for square matrix this is commonly called h)
-/// @param dy Step length in y direction
+/// @param x_bound Boundaries in x direction
+/// @param y_bound Boundaries in y direction
 /// @param x_center Centre of initial wave packet in x direction
 /// @param y_center Centre of initial wave packet in y direction
 /// @param x_spread Centre of initial wave packet in x direction
@@ -21,7 +21,7 @@
 /// @param dx Wave packet momentum in x direction
 /// @param dy Wave packet momentum in y direction
 /// @return A complex Armadillo vector containing the wave function.
-arma::cx_vec initialize_particle_wavefunction(size_t Nx, size_t Ny, double dx, double dy, double x_center, double y_center,
-                                              double x_spread, double y_spread, double px, double py);
+arma::cx_vec initialize_particle_wavefunction(size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound,
+                                              double x_center, double y_center, double x_spread, double y_spread, double px, double py);
 
 #endif
