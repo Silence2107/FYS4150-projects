@@ -30,7 +30,8 @@ int main()
     arma::vec x_bound = {0, 1}, y_bound = {0, 1};
     arma::mat V_matr = arma::zeros<arma::mat>(Nx - 2, Ny - 2);
 
-    int numIterations = 100;
+    int numIterations = 1000;
+    int numWarmUpIterations = 50;
 
     double dt = 0.0001; // fine dt is REQUIRED for reasonable results, however be mindful about stability
 
@@ -49,24 +50,32 @@ int main()
         }
     }
 
+
+    // Warmup, to avoid second test looking faster just because some memory handling behind the scenes or something
+    // just makes things faster after the first few iterations. 
+    {
+        std::cout << "\n Warming up.\n";
+        auto start = high_resolution_clock::now(); // Record starting time.
+        // invoke update
+        auto psi_new = schrodinger_solver(psi_old, V_matr, dt, Nx, Ny, x_bound, y_bound);
+        for (size_t i = 0; i < numWarmUpIterations - 1; ++i)
+        {
+            psi_new = dense_schrodinger_solver(psi_new, V_matr, dt, Nx, Ny, x_bound, y_bound);
+        }
+        auto stop = high_resolution_clock::now(); // Record ending time.
+        auto duration = duration_cast<microseconds>(stop - start);
+        cout << "Warm up time " << duration.count() << " microseconds." << endl;
+    }
+
     // Measure time performance on older dense matrix code. Making a code block for simple reuse if variable declarations later.
     {
-        std::cout << "\n Test 1. Timeing of dense matrix solving.\n";
+        std::cout << "\n Test 1. Timing of dense matrix solving.\n";
         auto start = high_resolution_clock::now(); // Record starting time.
         // invoke update
         auto psi_new = schrodinger_solver(psi_old, V_matr, dt, Nx, Ny, x_bound, y_bound);
         for (size_t i = 0; i < numIterations - 1; ++i)
         {
             psi_new = dense_schrodinger_solver(psi_new, V_matr, dt, Nx, Ny, x_bound, y_bound);
-        }
-        // print psi_new as matrix
-        arma::cx_mat psi_new_mat = arma::zeros<arma::cx_mat>(Nx - 2, Ny - 2);
-        for (size_t i = 0; i < Nx - 2; i++)
-        {
-            for (size_t j = 0; j < Ny - 2; j++)
-            {
-                psi_new_mat(i, j) = psi_new(flatten_index(i, j, Nx - 2));
-            }
         }
         auto stop = high_resolution_clock::now(); // Record ending time.
         auto duration = duration_cast<microseconds>(stop - start);
@@ -75,22 +84,13 @@ int main()
 
     // Do the same with the new sparse algoritm
     {
-        std::cout << "\n Test 2. Timeing of sparse matrix solving.\n";
+        std::cout << "\n Test 2. Timing of sparse matrix solving.\n";
         auto start = high_resolution_clock::now(); // Record starting time.
         // invoke update
         auto psi_new = dense_schrodinger_solver(psi_old, V_matr, dt, Nx, Ny, x_bound, y_bound);
         for (size_t i = 0; i < numIterations - 1; ++i)
         {
             psi_new = schrodinger_solver(psi_new, V_matr, dt, Nx, Ny, x_bound, y_bound);
-        }
-        // print psi_new as matrix
-        arma::cx_mat psi_new_mat = arma::zeros<arma::cx_mat>(Nx - 2, Ny - 2);
-        for (size_t i = 0; i < Nx - 2; i++)
-        {
-            for (size_t j = 0; j < Ny - 2; j++)
-            {
-                psi_new_mat(i, j) = psi_new(flatten_index(i, j, Nx - 2));
-            }
         }
         auto stop = high_resolution_clock::now(); // Record ending time.
         auto duration = duration_cast<microseconds>(stop - start);
