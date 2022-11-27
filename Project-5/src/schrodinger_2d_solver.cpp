@@ -68,8 +68,8 @@ arma::cx_vec schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, dou
     auto&& [A, B] = generate_crank_nicolson_A_and_B(V, dt, dx, dy, Nx, Ny);
 
     // now it takes to solve A psi_new = B * psi
-    //lapack is one of multiple algoritms for solving sparse matrix equations. It appears to perform well for our case.
-    return arma::spsolve(A, B * psi, "superlu");
+    //superlu is one of multiple algoritms for solving sparse matrix equations. It appears to perform well for our case, as it's fastests for Nx=Ny=40.
+    return arma::spsolve(A, B * psi, "superlu"); 
 }
 
 arma::cx_vec schrodinger_solver(const arma::cx_vec &psi, const std::function<double(double, double)> &V, double dt, size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound)
