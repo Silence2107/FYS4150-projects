@@ -49,10 +49,15 @@ int main()
     // r is defined as i*dt/(2h^2) or for rectangular case i*dt/(2dxdy)
     // This could/should be extended to check more elemenets.
     std::complex<double> rExpected = 1i * dt / (2 * dx * dy); // should be 8.000e-04 * 1i;
-    /*
-        std::complex<double> error1 = rExpected - (-A(3, 0));
-        std::complex<double> error2 = rExpected - (B(3, 0));
-    */
+
+    // Calculate a_4 for another test.
+    size_t k = flatten_index(1, 1, Nx - 2); // is 4
+    //cout << "k is " << k << endl;
+    int i = 1, j = 1;
+    std::complex<double> a_k = 1.0 + 4.0 * rExpected + 1i * dt * V_matr(i, j) / 2.0;
+    //cout << "a_k is " << a_k << endl;
+
     compare_and_assert("A", A, 3, 0, -rExpected);
     compare_and_assert("B", B, 3, 0, rExpected);
+    compare_and_assert("A", A, 3, 3, a_k);
 }
