@@ -17,6 +17,14 @@ size_t flatten_index(size_t i, size_t j, size_t Nx);
 /// @return Unflattened index
 arma::uvec unflatten_index(size_t k, size_t Nx);
 
+/// @brief A function that finds the discretized step sizes in position dx and dy, given a selected domain and a matrix size to work with.
+/// @param Nx Number of grid points in x direction
+/// @param Ny Number of grid points in y direction
+/// @param x_bound Boundaries in x direction
+/// @param y_bound Boundaries in y direction
+/// @return A c++ standard tuple containing two doubles for dx and dy
+std::tuple<double, double> find_dx_and_dy(size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound);
+
 /// @brief Allows to wrap std::function of general form so that to support caching.
 /// @tparam Foutput Function's output type
 /// @tparam Cache  Cache type;

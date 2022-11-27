@@ -15,11 +15,9 @@ int main()
 
     double dt = 0.0001; // fine dt is REQUIRED for reasonable results, however be mindful about stability
 
-    // initialize psi
-    double x_min = x_bound(0), x_max = x_bound(1);  //TODO: these 3 lines getting duplicate. Refactor somehow, maybe into auxilaries.
-    double y_min = y_bound(0), y_max = y_bound(1);
-    double dx = (x_max - x_min) / (Nx - 1), dy = (y_max - y_min) / (Ny - 1);
+    auto [dx, dy] = find_dx_and_dy(Nx, Ny, x_bound, y_bound);
 
+    // initialize psi
     //Picking some physical values for the wave packet. 
     //For this unit test we could really use anything. However the numbers below are taken from an actual sample run we will do later.
     arma::cx_vec psi_old = initialize_particle_wavefunction(Nx, Ny, dx, dy, 0.25, 0.5, 0.05, 0.05, 200.0, 0.0);
