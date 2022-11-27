@@ -3,6 +3,7 @@
 #include "../include/auxiliaries.h"
 
 #include <iostream>
+#include <iomanip>
 #include <armadillo>
 
 using namespace std;
@@ -15,6 +16,14 @@ using namespace std::chrono;
  */
 std::tuple<arma::cx_mat, arma::cx_mat> dense_generate_crank_nicolson_A_and_B(const arma::mat &V, double dt, double dx, double dy, size_t Nx, size_t Ny);
 arma::cx_vec dense_schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, double dt, size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound);
+
+string timeInSeconds(double milliseconds)
+{
+    double seconds = milliseconds / 1000000.0;
+    std::stringstream stream;
+    stream << std::fixed << std::setprecision(3) << seconds;
+    return stream.str();
+}
 
 /*** This program is for comparing preformance between solving for dense or sparse matrices
      The actual Crank Nicolson algoritm under the shared source folder ../src were modified to use
@@ -64,7 +73,7 @@ int main()
         }
         auto stop = high_resolution_clock::now(); // Record ending time.
         auto duration = duration_cast<microseconds>(stop - start);
-        cout << "Warm up time " << duration.count() << " microseconds." << endl;
+        cout << "Warm up time " << timeInSeconds(duration.count()) << " seconds." << endl;
     }
 
     // Measure time performance on older dense matrix code. Making a code block for simple reuse if variable declarations later.
@@ -79,7 +88,7 @@ int main()
         }
         auto stop = high_resolution_clock::now(); // Record ending time.
         auto duration = duration_cast<microseconds>(stop - start);
-        cout << "Time taken by dense matrix solving " << numIterations << " iterations: " << duration.count() << " microseconds." << endl;
+        cout << "Time taken by dense matrix solving " << numIterations << " iterations: " << timeInSeconds(duration.count()) << " seconds." << endl;
     }
 
     // Do the same with the new sparse algoritm
@@ -94,7 +103,7 @@ int main()
         }
         auto stop = high_resolution_clock::now(); // Record ending time.
         auto duration = duration_cast<microseconds>(stop - start);
-        cout << "Time taken by sparse matrix solving " << numIterations << " iterations: " << duration.count() << " microseconds." << endl;
+        cout << "Time taken by sparse matrix solving " << numIterations << " iterations: " << timeInSeconds(duration.count()) << " seconds." << endl;
     }
 }
 
