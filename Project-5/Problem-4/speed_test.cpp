@@ -48,7 +48,7 @@ int main()
     int numIterations = 1000;
     int numWarmUpIterations = 100;
 
-    double dt = 0.0001; // fine dt is REQUIRED for reasonable results, however be mindful about stability
+    double dt = 0.000025; // fine dt is REQUIRED for reasonable results, however be mindful about stability
 
     // Initialize wave function psi.
     // Picking some physical values for the wave packet.
@@ -210,42 +210,27 @@ std::tuple<arma::cx_mat, arma::cx_mat> dense_generate_crank_nicolson_A_and_B(con
 arma::cx_vec dense_schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, double dt, size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound)
 {
     auto [dx, dy] = find_dx_and_dy(Nx, Ny, x_bound, y_bound);
-
-    auto [A, B] = dense_generate_crank_nicolson_A_and_B(V, dt, dx, dy, Nx, Ny);
-
-    // now it takes to solve A psi_new = B * psi
+    auto&& [A, B] = dense_generate_crank_nicolson_A_and_B(V, dt, dx, dy, Nx, Ny);
     return arma::solve(A, B * psi);
 }
 
 arma::cx_vec default_sparse_schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, double dt, size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound)
 {
     auto [dx, dy] = find_dx_and_dy(Nx, Ny, x_bound, y_bound);
-
-    auto [A, B] = generate_crank_nicolson_A_and_B(V, dt, dx, dy, Nx, Ny);
-
-    // now it takes to solve A psi_new = B * psi
-    //lapack is one of multiple algoritms for solving sparse matrix equations. It appears to perform well for our case.
+    auto&& [A, B] = generate_crank_nicolson_A_and_B(V, dt, dx, dy, Nx, Ny);
     return arma::spsolve(A, B * psi);
 }
 
 arma::cx_vec superlu_schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, double dt, size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound)
 {
     auto [dx, dy] = find_dx_and_dy(Nx, Ny, x_bound, y_bound);
-
-    auto [A, B] = generate_crank_nicolson_A_and_B(V, dt, dx, dy, Nx, Ny);
-
-    // now it takes to solve A psi_new = B * psi
-    //lapack is one of multiple algoritms for solving sparse matrix equations. It appears to perform well for our case.
+    auto&& [A, B] = generate_crank_nicolson_A_and_B(V, dt, dx, dy, Nx, Ny);
     return arma::spsolve(A, B * psi, "superlu");
 }
 
 arma::cx_vec lapack_schrodinger_solver(const arma::cx_vec &psi, const arma::mat &V, double dt, size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound)
 {
     auto [dx, dy] = find_dx_and_dy(Nx, Ny, x_bound, y_bound);
-
-    auto [A, B] = generate_crank_nicolson_A_and_B(V, dt, dx, dy, Nx, Ny);
-
-    // now it takes to solve A psi_new = B * psi
-    //lapack is one of multiple algoritms for solving sparse matrix equations. It appears to perform well for our case.
+    auto&& [A, B] = generate_crank_nicolson_A_and_B(V, dt, dx, dy, Nx, Ny);
     return arma::spsolve(A, B * psi, "lapack");
 }
