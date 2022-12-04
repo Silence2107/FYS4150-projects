@@ -8,6 +8,6 @@ The code is mostly confined to the `many_slit_potential_unit_test.sh` script. Ty
 ```
 , where the `-n` flag sets the number of slits and the `-f` flag sets the output file. The output file is a pdf file with the potential plotted.
 
-Should you have desire to simulate more flexible slits, you are welcome to change corresponding settings in the `many_slit_potential_unit_test.cpp` script.
+Should you have desire to simulate more flexible slits, you are welcome to change corresponding settings in the `many_slit_potential_unit_test.cpp` file.
 
 P.S. The script is not quick due to recompilations, but it is not the point of this exercise.
