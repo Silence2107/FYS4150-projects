@@ -3,6 +3,7 @@
 
 #include <armadillo>
 
+using namespace std;
 using namespace std::complex_literals;
 
 arma::cx_vec initialize_particle_wavefunction(size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound,
@@ -24,8 +25,8 @@ arma::cx_vec initialize_particle_wavefunction(size_t Nx, size_t Ny, const arma::
 			double x = x_min + (i + 1) * dx;
 			double y = y_min + (j + 1) * dy;
 			// Build the large exponent expression given for u() in project spec.
-			std::complex<double> exp_1 = -(x - x_center) * (x - x_center) / 2 * (x_spread * x_spread);
-			std::complex<double> exp_2 = -(y - y_center) * (y - y_center) / 2 * (y_spread * y_spread);
+			std::complex<double> exp_1 = -(x - x_center) * (x - x_center) / (2 * (x_spread * x_spread));
+			std::complex<double> exp_2 = -(y - y_center) * (y - y_center) / (2 * (y_spread * y_spread));
 			std::complex<double> exp_3 = 1i * px * (x - x_center);
 			std::complex<double> exp_4 = 1i * py * (y - y_center);
 
