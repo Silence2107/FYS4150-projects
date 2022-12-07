@@ -5,6 +5,8 @@
 #include <iostream>
 #include <armadillo>
 
+using namespace std;
+
 double hard_coded_slit(double x, double y, int number_of_slits)
 {
     // initialize potential to simulate wall
@@ -21,24 +23,27 @@ int main()
 {
     // unit test for initializing wave function. Then also running schrodinger_solver to check if it stays normalized.
 
-    size_t Nx = 51, Ny = 51;
+    size_t Nx = 101, Ny = 101;
     arma::vec x_bound = {0, 1}, y_bound = {0, 1};
 
     double dt = 0.000025; // fine dt is REQUIRED for reasonable results, however be mindful about stability
     // double T = 0.008;     // End time of simulation.
-    double T = 0.008; // End time of simulation.
-    size_t Nt = T / dt;
+    double T = 0.008; // Short end time of simulation, this is for Problem 7.
+    //double T = 0.02; // Longer end time of simulation, this is for Problem 8.
+    size_t Nt = 1 + T / dt;
 
-    count << "Iteration number to run: " << Nt << endl;
+    cout << "Iteration number to run: " << Nt << endl;
 
     // Making a function pointer to potential function, using function above with hardcoded values, except number of slits.
     auto V_func = [](double x, double y)
     { return hard_coded_slit(x, y, 2); };
+    //{ return 0.0; };
 
     // Initialize wave function psi.
     // Picking some physical values for the wave packet.
     // For this unit test we could really use anything. However the numbers below are taken from an actual sample run we will do later.
     arma::cx_vec psi_old = initialize_particle_wavefunction(Nx, Ny, x_bound, y_bound, 0.25, 0.5, 0.05, 0.05, 200.0, 0.0);
+    //Parameter list meaning x_center=0.25, y_center=0.5, spread x=0.05, spread y=0.05, px=200, py=0.
 
     // 1. check that the norm of the solution is preserved
     std::cout << "\n Test 1. \n";
