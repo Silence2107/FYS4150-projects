@@ -1,24 +1,39 @@
 #include "../include/schrodinger_2d_solver.h"
 #include "../include/schrodinger_2d_initializer.h"
 #include "../include/auxiliaries.h"
-
+#include "../include/many_slit_initializer.h"
 #include <iostream>
 #include <armadillo>
+
+double hard_coded_slit(double x, double y, int number_of_slits)
+{
+    // initialize potential to simulate wall
+    static double x_center = 0.5, y_center = 0.5;
+    static double x_slit_width = 0.02,
+                  y_slit_width = 0.05,
+                  y_slit_spacing = 0.05;
+    static int wall_potential = 1000000; // approximate wall to a very large potential
+
+    return many_slit_potential(x, y, x_center, y_center, x_slit_width, y_slit_width, y_slit_spacing, number_of_slits, wall_potential);
+}
 
 int main()
 {
     // unit test for initializing wave function. Then also running schrodinger_solver to check if it stays normalized.
 
-    size_t Nx = 5, Ny = 5;
+    size_t Nx = 51, Ny = 51;
     arma::vec x_bound = {0, 1}, y_bound = {0, 1};
 
     double dt = 0.000025; // fine dt is REQUIRED for reasonable results, however be mindful about stability
-    //double T = 0.008;     // End time of simulation.
-    double T  = 0.0001;     // End time of simulation.
+    // double T = 0.008;     // End time of simulation.
+    double T = 0.008; // End time of simulation.
     size_t Nt = T / dt;
 
-    // Temporary zero potential. TODO: Insert code from problem 5.
-    auto V_func = [](double x, double y) { return 0.0; };
+    count << "Iteration number to run: " << Nt << endl;
+
+    // Making a function pointer to potential function, using function above with hardcoded values, except number of slits.
+    auto V_func = [](double x, double y)
+    { return hard_coded_slit(x, y, 2); };
 
     // Initialize wave function psi.
     // Picking some physical values for the wave packet.
@@ -73,8 +88,12 @@ int main()
         }
     }
 
+    // save the matrix to a csv file
+    psi_old_prob.save("init_prob.csv", arma::csv_ascii);
+    psi_new_prob.save("final_prob.csv", arma::csv_ascii);
+
     // stats
-    psi_old_prob.print("psi_old_prob = ");
-    psi_new_prob.print("psi_new_prob = ");
+    // psi_old_prob.print("psi_old_prob = ");
+    // psi_new_prob.print("psi_new_prob = ");
     std::cout << "avg. relative error = " << arma::accu(arma::abs(psi_old_prob - psi_new_prob) / psi_old_prob) / ((Nx - 2) * (Ny - 2)) << std::endl;
 }
