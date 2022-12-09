@@ -18,8 +18,6 @@
 /// @param y_spread Centre of initial wave packet in y direction
 /// @param px Spread of initial wave packet in x direction
 /// @param py Spread of initial wave packet in y direction
-/// @param dx Wave packet momentum in x direction
-/// @param dy Wave packet momentum in y direction
 /// @return A complex Armadillo vector containing the wave function.
 arma::cx_vec initialize_particle_wavefunction(size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound,
                                               double x_center, double y_center, double x_spread, double y_spread, double px, double py);
