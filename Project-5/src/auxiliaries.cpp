@@ -28,7 +28,7 @@ std::tuple<double, double> find_dx_and_dy(size_t Nx, size_t Ny, const arma::vec 
 arma::cx_mat unflatten_matrix(arma::cx_mat psi_flat, size_t w, size_t h)
 {
     arma::cx_mat psi_mat = arma::zeros<arma::cx_mat>(w, h);
-    for (size_t i = 0; i < w - 2; i++)
+    for (size_t i = 0; i < w; i++)
     {
         for (size_t j = 0; j < h; j++)
         {
