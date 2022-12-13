@@ -8,7 +8,7 @@
 using namespace std;
 using namespace complex_literals;
 
-void compare_and_assert(string matrixName, const arma::cx_mat &C, size_t i, size_t j, complex<double> expected)
+void compare_and_assert(string matrixName, const arma::sp_cx_mat &C, size_t i, size_t j, complex<double> expected)
 {
     static const double epsilon = 1.0e-15;
 
@@ -55,7 +55,7 @@ int main()
 
     double dx = (x_max - x_min) / (Nx - 1), dy = (y_max - y_min) / (Ny - 1);
 
-    const auto [A, B] = generate_crank_nicolson_A_and_B(V_matr, dt, dx, dy, Nx, Ny);
+    auto&& [A, B] = generate_crank_nicolson_A_and_B(V_matr, dt, dx, dy, Nx, Ny);
 
     // Testing a couple arbitrary values from matrces for expected values.
     // For now only one value from each matrix we know should be r and -r.
