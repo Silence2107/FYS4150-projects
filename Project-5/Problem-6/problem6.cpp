@@ -90,7 +90,7 @@ int perform_simulation(int number_of_slits, double T, size_t grid_size)
             char filename[100];
             sprintf(filename, "prob%d.csv", (int)t);
             cout << "Completed " << t << " iterations. Saving current state to file " << filename << endl;
-            probability_matrix(psi_new_mat).save(buffer, arma::csv_ascii);
+            probability_matrix(psi_new_mat).save(filename, arma::csv_ascii);
         }
     }
 

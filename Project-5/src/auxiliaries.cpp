@@ -25,7 +25,7 @@ std::tuple<double, double> find_dx_and_dy(size_t Nx, size_t Ny, const arma::vec 
     return std::make_tuple(dx, dy);
 }
 
-arma::cx_mat unflatten_matrix(arma::cx_mat psi_flat, size_t w, size_t h)
+arma::cx_mat unflatten_matrix(arma::cx_mat &psi_flat, size_t w, size_t h)
 {
     arma::cx_mat psi_mat = arma::zeros<arma::cx_mat>(w, h);
     for (size_t i = 0; i < w; i++)
@@ -38,7 +38,7 @@ arma::cx_mat unflatten_matrix(arma::cx_mat psi_flat, size_t w, size_t h)
     return psi_mat;
 }
 
-arma::mat probability_matrix(arma::cx_mat psi)
+arma::mat probability_matrix(arma::cx_mat &psi)
 {
     arma::cx_mat psiConjugate = arma::conj(psi); // Complex conjugate.
     arma::cx_mat prob = psi % psiConjugate;      // Element-wise multiplication
