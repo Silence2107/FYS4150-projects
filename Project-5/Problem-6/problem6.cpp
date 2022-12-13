@@ -76,7 +76,7 @@ int perform_simulation(int number_of_slits, double T, size_t grid_size)
 
     // perform time evolution
     auto psi_new = schrodinger_solver(psi_old, V_func, dt, Nx, Ny, x_bound, y_bound);
-    cout << "Loop over time starts" << endl;
+    
     for (size_t t = 0; t < Nt; ++t)
     {
         psi_new = schrodinger_solver(psi_new, V_func, dt, Nx, Ny, x_bound, y_bound);
@@ -87,8 +87,9 @@ int perform_simulation(int number_of_slits, double T, size_t grid_size)
         // save the probabiltiy matrix to a csv file, for time stemps of even 50s, to have still images for a rough time progression.
         if (t % 50 == 0)
         {
-            char buffer[100];
-            sprintf(buffer, "prob%d.csv", (int)t);
+            char filename[100];
+            sprintf(filename, "prob%d.csv", (int)t);
+            cout << "Completed " << t << " iterations. Saving current state to file " << filename << endl;
             probability_matrix(psi_new_mat).save(buffer, arma::csv_ascii);
         }
     }
