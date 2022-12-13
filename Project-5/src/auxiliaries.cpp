@@ -24,3 +24,10 @@ std::tuple<double, double> find_dx_and_dy(size_t Nx, size_t Ny, const arma::vec 
     double dx = (x_max - x_min) / (Nx - 1), dy = (y_max - y_min) / (Ny - 1);
     return std::make_tuple(dx, dy);
 }
+
+arma::mat probability_matrix(arma::cx_mat psi)
+{
+	arma::cx_mat psiConjugate = arma::conj(psi);  //Complex conjugate. 
+	arma::cx_mat prob = psi % psiConjugate; //Element-wise multiplication
+	return arma::real(prob); //By now prob only contains real numbers, due to multiplication with complex conjugate. This call effectively only changes type.
+}

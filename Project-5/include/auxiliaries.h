@@ -25,6 +25,11 @@ arma::uvec unflatten_index(size_t k, size_t Nx);
 /// @return A c++ standard tuple containing two doubles for dx and dy
 std::tuple<double, double> find_dx_and_dy(size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound);
 
+/// @brief A function to calculate probability from a wave function, basically just multiplying any matrix with it's complex conjugate. 
+/// @param psi A complex matrix representing wave function. Works both for rectangular matrices, and the flattened 1xN matrices.
+/// @return A real matrix representing probability. 
+arma::mat probability_matrix(arma::cx_mat psi);
+
 /// @brief Allows to wrap std::function of general form so that to support caching.
 /// @tparam Foutput Function's output type
 /// @tparam Cache  Cache type;
