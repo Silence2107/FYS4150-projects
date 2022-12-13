@@ -3,12 +3,12 @@
 
 #include <armadillo>
 
-using namespace std;
-using namespace std::complex_literals;
 
 arma::cx_vec initialize_particle_wavefunction(size_t Nx, size_t Ny, const arma::vec &x_bound, const arma::vec &y_bound,
 											  double x_center, double y_center, double x_spread, double y_spread, double px, double py)
 {
+	using namespace std;
+	using namespace std::complex_literals;
 	// first introduce psi matrix - the digitalized wave function.
 	arma::cx_mat psi = arma::zeros<arma::cx_vec>((Nx - 2) * (Ny - 2));
 
