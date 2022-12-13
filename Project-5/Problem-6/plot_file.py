@@ -10,7 +10,7 @@ data = np.genfromtxt('init_prob.csv', delimiter=',')
 plt.imshow(data, cmap='hot', interpolation='nearest')
 
 # Save the plot
-plt.savefig("init.png")
+plt.savefig("init.pdf")
 
 #Final state
 # Read data from csv file into a np array
@@ -20,7 +20,7 @@ data = np.genfromtxt('final_prob.csv', delimiter=',')
 plt.imshow(data, cmap='hot', interpolation='nearest')
 
 # Save the plot
-plt.savefig("final.png")
+plt.savefig("final.pdf")
 
 
 #Potential - can't be used right now as C++ does not export it.
@@ -31,5 +31,5 @@ plt.savefig("final.png")
 #plt.imshow(data, cmap='hot', interpolation='nearest')
 
 # Save the plot
-#plt.savefig("potential.png")
+#plt.savefig("potential.pdf")
 
