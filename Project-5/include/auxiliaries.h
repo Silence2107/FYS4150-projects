@@ -30,12 +30,12 @@ std::tuple<double, double> find_dx_and_dy(size_t Nx, size_t Ny, const arma::vec 
 /// @param w Width of matrix, corresponding to physical x-axis.
 /// @param h Height of matrix, corresponding to physical y-axis.
 /// @return A size w*h complex matrix containing all the elements of the original 1*n (n=w*h) matrix.
-arma::cx_mat unflatten_matrix(arma::cx_mat &psi_flat, size_t w, size_t h);
+arma::cx_mat unflatten_matrix(const arma::cx_mat& psi_flat, size_t w, size_t h);
 
 /// @brief A function to calculate probability from a wave function, basically just multiplying any matrix with it's complex conjugate. 
 /// @param psi A complex matrix representing wave function. Works both for rectangular matrices, and the flattened 1xN matrices.
 /// @return A real matrix representing probability. 
-arma::mat probability_matrix(arma::cx_mat &psi);
+arma::mat probability_matrix(const arma::cx_mat& psi);
 
 /// @brief Allows to wrap std::function of general form so that to support caching.
 /// @tparam Foutput Function's output type
