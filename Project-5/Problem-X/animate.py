@@ -3,8 +3,11 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
+import pyarma as pa
+
 #Credits: 
 #Much of this source code is copied from https://anderkve.github.io/FYS3150/book/projects/project5.html
+#Some also taken from https://anderkve.github.io/FYS3150/book/introduction_to_cpp/intro_to_armadillo.html
 
 #
 # Let's generate a dummy time series for a function z(x,y,t)
@@ -19,6 +22,11 @@ x, y = np.meshgrid(x_points, y_points, sparse=True)
 # Array of time points
 dt = 0.005
 t_points = np.arange(0, 1+dt, dt)
+
+#Loading the data set of probabilities exported from Problem 8. 
+#This is a cube in x,y,time and should be used in place of the previous example function of this scrpit.
+A = pa.cube() #Create pa.mat object (just as arma::mat in C++)
+A.load("data3d.out") #Load the content of the matrix you saved into your Python program.
 
 # A function for a Gaussian that is travelling 
 # in the x direction and broadening as time passes
