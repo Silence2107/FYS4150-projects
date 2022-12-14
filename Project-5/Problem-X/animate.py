@@ -27,6 +27,9 @@ t_points = np.arange(0, 1+dt, dt)
 #This is a cube in x,y,time and should be used in place of the previous example function of this scrpit.
 A = pa.cube() #Create pa.mat object (just as arma::mat in C++)
 A.load("data3d.out") #Load the content of the matrix you saved into your Python program.
+#This A has [cube size: 199x199x81]
+#TODO: replace z-function below with this data. Perhaps by taking slices like z_data = pa.mat(A[ :, : , t/dt ])
+#However need to make sure t/dt is an integer, and there are other places we may run index out of bounds too.
 
 # A function for a Gaussian that is travelling 
 # in the x direction and broadening as time passes
