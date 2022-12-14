@@ -74,10 +74,10 @@ int main()
         std::cout << "\n Warming up.\n";
         auto start = high_resolution_clock::now(); // Record starting time.
         // invoke update
-        auto psi_new = dense_schrodinger_solver(psi_old, V_matr, dt, Nx, Ny, x_bound, y_bound);
+        auto psi_new = default_sparse_schrodinger_solver(psi_old, V_matr, dt, Nx, Ny, x_bound, y_bound);
         for (size_t i = 0; i < numWarmUpIterations - 1; ++i)
         {
-            psi_new = dense_schrodinger_solver(psi_new, V_matr, dt, Nx, Ny, x_bound, y_bound);
+            psi_new = default_sparse_schrodinger_solver(psi_new, V_matr, dt, Nx, Ny, x_bound, y_bound);
         }
         auto stop = high_resolution_clock::now(); // Record ending time.
         auto duration = duration_cast<microseconds>(stop - start);
