@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+from matplotlib.animation import FuncAnimation, PillowWriter
 
 import pyarma as pa
 
@@ -15,34 +15,38 @@ import pyarma as pa
 
 # Set up a 2D xy grid
 h = 0.005
-x_points = np.arange(0, 1+h, h)
-y_points = np.arange(0, 1+h, h)
+x_points = np.arange(0, 1, h)
+y_points = np.arange(0, 1, h)
 x, y = np.meshgrid(x_points, y_points, sparse=True)
 
 # Array of time points
-dt = 0.005
-t_points = np.arange(0, 1+dt, dt)
+dt = 2.5E-5
+t_points = np.linspace(0, 80*dt, 80)
 
 #Loading the data set of probabilities exported from Problem 8. 
 #This is a cube in x,y,time and should be used in place of the previous example function of this scrpit.
 A = pa.cube() #Create pa.mat object (just as arma::mat in C++)
-A.load("data3d.out") #Load the content of the matrix you saved into your Python program.
+# Load the content of the matrix you saved into your Python program.
+A.load("Project-5/Problem-X/data3d.out")
 #This A has [cube size: 199x199x81]
 #TODO: replace z-function below with this data. Perhaps by taking slices like z_data = pa.mat(A[ :, : , t/dt ])
 #However need to make sure t/dt is an integer, and there are other places we may run index out of bounds too.
 
 # A function for a Gaussian that is travelling 
 # in the x direction and broadening as time passes
-def z(x,y,t):
-    v = 0.5
-    x_c = 0.2
-    sigma_x = 0.025 + 0.15 * t
-    return 1. / (2 * np.pi * np.sqrt(sigma_x)) * np.exp(-0.5 * (x - x_c - v * t)**2 / sigma_x**2)
+def z(xpar,ypar,tpar):
+    # turn matrix A into function
+    i,j,k = int(xpar//h), int(ypar//h), int(tpar//dt)
+
+    return A[i,j,k]
 
 # Fill z_data_list with f(x,y,t)
 z_data_list = []
 for t in t_points:
-    z_data = z(x, y, t)
+    z_data = np.zeros((len(x_points), len(y_points)))
+    for x in x_points:
+        for y in y_points:
+            z_data[int(x//h),int(y//h)] = z(x,y,t)
     z_data_list.append(z_data)
 
 
@@ -102,7 +106,8 @@ def animation(i):
 anim = FuncAnimation(fig, animation, interval=1, frames=np.arange(0, len(z_data_list), 2), repeat=False, blit=0)
 
 # Run the animation!
-plt.show()
+#plt.show()
 
 # # Save the animation
-# anim.save('./animation.mp4', writer="ffmpeg", bitrate=-1, fps=30)
+writergif = PillowWriter(fps=30)
+anim.save('Project-5/Problem-X/animation.gif', writer=writergif)
