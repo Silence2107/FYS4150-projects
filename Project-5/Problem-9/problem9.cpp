@@ -17,13 +17,16 @@ int main()
 
     double T = 0.002; // Time limit specified in problem 8
 
-    int number_of_slits = 2; // Default value, it will be relevant to use 0, 1 and 3 later.
-
     // 200x200 grid for x,y, meaning 201 x,y-points respectively.
     // This is equivalent to saying h=0.005, also specified in problem 8.
-    size_t grid_size = 100;
+    size_t grid_size = 200;
 
-    return perform_simulation(number_of_slits, T, grid_size);
+    // Run for 0,1,2 and 3 number of slits.
+    perform_simulation(0, T, grid_size);
+    perform_simulation(1, T, grid_size);
+    perform_simulation(2, T, grid_size);
+    perform_simulation(3, T, grid_size);
+    return 0;
 }
 
 double hard_coded_slit(double x, double y, int number_of_slits)
@@ -40,6 +43,8 @@ double hard_coded_slit(double x, double y, int number_of_slits)
 
 int perform_simulation(int number_of_slits, double T, size_t grid_size)
 {
+    cout << "Simulating for " << number_of_slits << " number of slits." << endl;
+
     // Adding 1, so for grid of 200 steps, use matrix of 201*201
     size_t Nx = grid_size + 1, Ny = grid_size + 1;
 
@@ -99,22 +104,13 @@ int perform_simulation(int number_of_slits, double T, size_t grid_size)
             // This is done by finding the colunm of the matrix matchines this, knowing columns ranges from x and y 0 to 1.
             size_t column_number_representing_location_of_screen = 0.8 * Nx;
 
-            cout << "Picking out matrix row " << column_number_representing_location_of_screen << endl;
-
             // auto probability_column_at_screen = probability_matrix(psi_new_mat.col(column_number_representing_location_of_screen));
             auto probability_column_at_screen = probability_matrix(psi_new_mat.row(column_number_representing_location_of_screen));
-            cout << probability_column_at_screen << endl;
-            cout << "norm:" << arma::norm(probability_column_at_screen) << endl;
             probability_column_at_screen = probability_column_at_screen / arma::norm(probability_column_at_screen);
-            cout << probability_column_at_screen << endl;
-            cout << "size y" << probability_column_at_screen.size() << endl;
 
             double h = 1.0 / grid_size;
             // auto x_vector = arma::linspace(h, 1.0-h, h);
             auto x_vector = arma::regspace(h, h, 1.0);
-
-            cout << "h=" << h << " to " << (1.0 - h) << " X_vector is " << x_vector << endl;
-            cout << "size x" << x_vector.size() << endl;
 
             std::vector<double> probabilities(Ny),
                 y_values(Ny);
@@ -139,7 +135,9 @@ int perform_simulation(int number_of_slits, double T, size_t grid_size)
                 probabilities[i] /= (sum * h);
             }
 
-            two_columns_to_csv("screen.csv", y_values, probabilities);
+            char filename[100];
+            sprintf(filename, "screen_%d_slits.csv", number_of_slits);
+            two_columns_to_csv(filename, y_values, probabilities);
         }
     }
 
