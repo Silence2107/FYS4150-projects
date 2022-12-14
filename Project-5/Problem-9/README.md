@@ -1,5 +1,5 @@
 # Problem 9 manual
-#Run simulations for different number of slits, and plot probabilities for detecting at screen, in 1D form.
+Run simulations for different number of slits, and plot probabilities for detecting at screen, in 1D form.
 
 # Usage
 Small programs for unit testing thereof. 
