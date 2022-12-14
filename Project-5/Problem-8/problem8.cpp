@@ -102,6 +102,16 @@ int perform_simulation(int number_of_slits, double T, size_t grid_size)
             sprintf(filename, "prob%d.csv", (int)t);
             cout << "Completed " << t << " iterations. Saving current state to file " << filename << endl;
             probability_matrix(psi_new_mat).save(filename, arma::csv_ascii);
+
+            //In addition to probability, also save real part and imaginary part of wave function at these points in time.
+            sprintf(filename, "real%d.csv", (int)t);
+            arma::mat real_part = arma::real(psi_new_mat);
+            cout << "Saving real part of wave function to file " << filename << endl;
+            real_part.save(filename, arma::csv_ascii);
+            sprintf(filename, "imag%d.csv", (int)t);
+            arma::mat imag_part = arma::imag(psi_new_mat);
+            cout << "Saving imaginary part of wave function to file " << filename << endl;
+            imag_part.save(filename, arma::csv_ascii);
         }
     }
 
