@@ -10,4 +10,5 @@ Small programs for unit testing thereof.
 - Run the code with 
 	`./problem6.exe`
 	`python3 ./plot_file.py`
-Then look at generated .png files. 
+	`python3 ./plot_many_timesteps.py`
+Then look at generated .pdf files. 
