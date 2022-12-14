@@ -2,6 +2,7 @@
 #include "../include/schrodinger_2d_initializer.h"
 #include "../include/auxiliaries.h"
 #include "../include/many_slit_initializer.h"
+#include "../include/file_io.h"
 #include <iostream>
 #include <armadillo>
 
@@ -20,7 +21,7 @@ int main()
 
     // 200x200 grid for x,y, meaning 201 x,y-points respectively.
     // This is equivalent to saying h=0.005, also specified in problem 8.
-    size_t grid_size = 200;
+    size_t grid_size = 100;
 
     return perform_simulation(number_of_slits, T, grid_size);
 }
@@ -81,40 +82,63 @@ int perform_simulation(int number_of_slits, double T, size_t grid_size)
     for (size_t t = 0; t < Nt; ++t)
     {
         // cout << "t="  << t << " time " << t*dt << endl;
-        if (t != 0) //Special case because we want to store initial conditition as first slice/outputfile.
+        if (t != 0) // Special case because we want to store initial conditition as first slice/outputfile.
         {
             psi_new = schrodinger_solver(psi_new, V_func, dt, Nx, Ny, x_bound, y_bound);
         }
 
         // calculate probability densities
         arma::cx_mat psi_new_mat = unflatten_matrix(psi_new, Nx - 2, Ny - 2);
-		
+
         // save the probabiltiy matrix to a csv file, for time stemps of even 50s, to have still images for a rough time progression.
         double currentTime = t * dt;
 
-        if (t == 80)  //This is t=0.002 the requested time to check probability at screen in problem 9.
+        if (t == 80) // This is t=0.002 the requested time to check probability at screen in problem 9.
         {
-            cout << " ===== Storing probability for time value " << currentTime << endl;
-            char filename[100];
-            sprintf(filename, "prob%d.csv", (int)t);
-            cout << "Completed " << t << " iterations. Saving current state to file " << filename << endl;
-            probability_matrix(psi_new_mat).save(filename, arma::csv_ascii);
+            // We want to pick out all probabilities along y, at the line x=0.8 where we state that the screen is located.
+            // This is done by finding the colunm of the matrix matchines this, knowing columns ranges from x and y 0 to 1.
+            size_t column_number_representing_location_of_screen = 0.8 * Nx;
 
-            //In addition to probability, also save real part and imaginary part of wave function at these points in time.
-            sprintf(filename, "real%d.csv", (int)t);
-            arma::mat real_part = arma::real(psi_new_mat);
-            cout << "Saving real part of wave function to file " << filename << endl;
-            real_part.save(filename, arma::csv_ascii);
-            sprintf(filename, "imag%d.csv", (int)t);
-            arma::mat imag_part = arma::imag(psi_new_mat);
-            cout << "Saving imaginary part of wave function to file " << filename << endl;
-            imag_part.save(filename, arma::csv_ascii);
+            cout << "Picking out matrix row " << column_number_representing_location_of_screen << endl;
+
+            // auto probability_column_at_screen = probability_matrix(psi_new_mat.col(column_number_representing_location_of_screen));
+            auto probability_column_at_screen = probability_matrix(psi_new_mat.row(column_number_representing_location_of_screen));
+            cout << probability_column_at_screen << endl;
+            cout << "norm:" << arma::norm(probability_column_at_screen) << endl;
+            probability_column_at_screen = probability_column_at_screen / arma::norm(probability_column_at_screen);
+            cout << probability_column_at_screen << endl;
+            cout << "size y" << probability_column_at_screen.size() << endl;
+
+            double h = 1.0 / grid_size;
+            // auto x_vector = arma::linspace(h, 1.0-h, h);
+            auto x_vector = arma::regspace(h, h, 1.0);
+
+            cout << "h=" << h << " to " << (1.0 - h) << " X_vector is " << x_vector << endl;
+            cout << "size x" << x_vector.size() << endl;
+
+            std::vector<double> probabilities(Ny),
+                y_values(Ny);
+            for (size_t i = 0; i < Ny; i++)
+            {
+                // std::cout << "Processing time step " << i << " of " << Nt << std::endl;
+                // psi = schrodinger_solver(psi, potential, dt, Nx, Ny, x_bound, y_bound);
+                if (i == 0 || i == Ny - 1)
+                {
+                    probabilities[i] = 0.0;
+                }
+                else
+                {
+                    probabilities[i] = probability_column_at_screen[i - 1];
+                }
+                y_values[i] = i * h;
+            }
+
+            two_columns_to_csv("screen.csv", y_values, probabilities);
         }
     }
 
-    //Final normal should be reasonably close to 1. Problem 7 dealth more with monitoring this over every time step.
+    // Final normal should be reasonably close to 1. Problem 7 dealth more with monitoring this over every time step.
     std::cout << "Final norm = " << arma::norm(psi_new) << std::endl;
-
 
     return 0;
 }
