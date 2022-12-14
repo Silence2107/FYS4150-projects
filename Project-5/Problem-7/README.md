@@ -8,4 +8,4 @@ From theoretical viewpoint, the total probability of the system is conserved and
     `./unitarity_check.exe <double_slit_on=(0,1) a.k.a. (false,true)>`
     - The code will generate a .txt file with the norm of the wave function for each time step.
 - For plotting, see
-	`python3 ./plot_prob_of_t.py --help`
+	`python3 ./plot_prob_of_t.py --file probability_of_time.txt`
