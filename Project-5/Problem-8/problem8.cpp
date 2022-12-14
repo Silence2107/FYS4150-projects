@@ -80,19 +80,21 @@ int perform_simulation(int number_of_slits, double T, size_t grid_size)
     arma::cube probabilities_all_time_steps = arma::cube(Nx - 2, Ny - 2, Nt);
 
     // perform time evolution
-    auto psi_new = psi_old; // schrodinger_solver(psi_old, V_func, dt, Nx, Ny, x_bound, y_bound);
-
+    auto psi_new = psi_old;
     for (size_t t = 0; t < Nt; ++t)
     {
         // cout << "t="  << t << " time " << t*dt << endl;
-        psi_new = schrodinger_solver(psi_new, V_func, dt, Nx, Ny, x_bound, y_bound);
+        if (t != 0) //Special case because we want to store initial conditition as first slice/outputfile.
+        {
+            psi_new = schrodinger_solver(psi_new, V_func, dt, Nx, Ny, x_bound, y_bound);
+        }
 
         // calculate probability densities
         arma::cx_mat psi_new_mat = unflatten_matrix(psi_new, Nx - 2, Ny - 2);
         probabilities_all_time_steps.slice(t) = probability_matrix(psi_new_mat);
         // save the probabiltiy matrix to a csv file, for time stemps of even 50s, to have still images for a rough time progression.
         double currentTime = t * dt;
-        // if (currentTime==0.0 || currentTime==1.0 || currentTime==2.0)
+
         if (t % 40 == 0) // With our values of dt this check will hit times 0, 0.001 and 0.002 as requested.
         {
             cout << " ===== Storing probability for time value " << currentTime << endl;
@@ -103,13 +105,14 @@ int perform_simulation(int number_of_slits, double T, size_t grid_size)
         }
     }
 
-    // Save the cube in binary Armadillo format. This gives efficient storing of huge 3D data, and can be read by Python pyarma.
+    // Save the cube in binary Armadillo format. This gives efficient storing of huge 3D data, and can be read by Python pyarma. 
+    // This is meant to be used for animation.
     probabilities_all_time_steps.save("data3d.out");
 
-    std::cout << "new_norm = " << arma::norm(psi_new) << std::endl;
+    //Final normal should be reasonably close to 1. Problem 7 dealth more with monitoring this over every time step.
+    std::cout << "Final norm = " << arma::norm(psi_new) << std::endl;
 
     // calculate probability densities
-
     arma::cx_mat psi_new_mat = unflatten_matrix(psi_new, Nx - 2, Ny - 2);
     arma::cx_mat psi_old_mat = unflatten_matrix(psi_old, Nx - 2, Ny - 2);
 
