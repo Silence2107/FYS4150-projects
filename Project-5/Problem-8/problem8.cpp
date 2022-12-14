@@ -18,9 +18,9 @@ int main()
 
     int number_of_slits = 2; // Default value, it will be relevant to use 0, 1 and 3 later.
 
-	//200x200 grid for x,y, meaning 201 x,y-points respectively. 
-	//This is equivalent to saying h=0.005, also specified in problem 8.
-    size_t grid_size = 200; 
+    // 200x200 grid for x,y, meaning 201 x,y-points respectively.
+    // This is equivalent to saying h=0.005, also specified in problem 8.
+    size_t grid_size = 200;
 
     return perform_simulation(number_of_slits, T, grid_size);
 }
@@ -44,10 +44,10 @@ int perform_simulation(int number_of_slits, double T, size_t grid_size)
 
     arma::vec x_bound = {0, 1}, y_bound = {0, 1};
 
-	//dt=2.5e-5 specified in problem 8. We have also seen that larger time steps diverges quickly from norm 1. 
-    double dt = 0.000025; 
-	
-	//Number of time steps. +1 because we include both t=0 and t=T, so one more than number of steps. 
+    // dt=2.5e-5 specified in problem 8. We have also seen that larger time steps diverges quickly from norm 1.
+    double dt = 0.000025;
+
+    // Number of time steps. +1 because we include both t=0 and t=T, so one more than number of steps.
     size_t Nt = 1 + T / dt;
 
     cout << "Number of iterations to run: " << Nt << endl;
@@ -74,28 +74,28 @@ int perform_simulation(int number_of_slits, double T, size_t grid_size)
     // For this unit test we could really use anything. However the numbers below are taken from an actual sample run we will do later.
     arma::cx_vec psi_old = initialize_particle_wavefunction(Nx, Ny, x_bound, y_bound, 0.25, 0.5, 0.05, 0.20, 200.0, 0.0);
     // Parameter list meaning x_center=0.25, y_center=0.5, spread x=0.05, spread y=0.20, px=200, py=0.
-	//Numbers from problem 8. Noting difference is higher spread in y than previous problems. 
+    // Numbers from problem 8. Noting difference is higher spread in y than previous problems.
 
     // Setting up an Armadillo cube object, to store the probability in x/y-plane for each t.
     arma::cube probabilities_all_time_steps = arma::cube(Nx - 2, Ny - 2, Nt);
 
     // perform time evolution
-    auto psi_new = psi_old;//schrodinger_solver(psi_old, V_func, dt, Nx, Ny, x_bound, y_bound);
-    
+    auto psi_new = psi_old; // schrodinger_solver(psi_old, V_func, dt, Nx, Ny, x_bound, y_bound);
+
     for (size_t t = 0; t < Nt; ++t)
     {
-		//cout << "t="  << t << " time " << t*dt << endl;
+        // cout << "t="  << t << " time " << t*dt << endl;
         psi_new = schrodinger_solver(psi_new, V_func, dt, Nx, Ny, x_bound, y_bound);
 
         // calculate probability densities
         arma::cx_mat psi_new_mat = unflatten_matrix(psi_new, Nx - 2, Ny - 2);
         probabilities_all_time_steps.slice(t) = probability_matrix(psi_new_mat);
         // save the probabiltiy matrix to a csv file, for time stemps of even 50s, to have still images for a rough time progression.
-		double currentTime = t*dt;
-        //if (currentTime==0.0 || currentTime==1.0 || currentTime==2.0)
-		if (t%40 == 0) // With our values of dt this check will hit times 0, 0.001 and 0.002 as requested.
+        double currentTime = t * dt;
+        // if (currentTime==0.0 || currentTime==1.0 || currentTime==2.0)
+        if (t % 40 == 0) // With our values of dt this check will hit times 0, 0.001 and 0.002 as requested.
         {
-			cout << " ===== Storing probability for time value " << currentTime << endl;
+            cout << " ===== Storing probability for time value " << currentTime << endl;
             char filename[100];
             sprintf(filename, "prob%d.csv", (int)t);
             cout << "Completed " << t << " iterations. Saving current state to file " << filename << endl;
