@@ -132,6 +132,12 @@ int perform_simulation(int number_of_slits, double T, size_t grid_size)
                 }
                 y_values[i] = i * h;
             }
+            // normalize probability by the area under the curve
+            double sum = std::accumulate(probabilities.begin(), probabilities.end(), 0.0);
+            for (size_t i = 0; i < Ny; ++i)
+            {
+                probabilities[i] /= (sum * h);
+            }
 
             two_columns_to_csv("screen.csv", y_values, probabilities);
         }
